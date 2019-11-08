@@ -90,7 +90,6 @@ namespace ArrowLegend.MapEditor
 
         public void ChangeLevel(int level)
         {
-          
             EnemyTime = 0;
             ChangeTimes();
         }
@@ -242,6 +241,23 @@ namespace ArrowLegend.MapEditor
             InstantiateBuild(EnemyBigType, EnemySmallType, infoList.Count, new TransformInfo());
             EnemyIndex = infoList.Count;
             infoList.Add(new TransformInfo());
+        }
+        /// <summary>
+        /// 添加怪物   笔刷加怪物
+        /// </summary>
+        public void AddEnemy(Vector3 pos)
+        {
+            //获取这个小类型的建筑列表
+            List<TransformInfo> infoList = GetCurrentEnemyInfo(true);
+            infoList.Add(new TransformInfo());
+            //infoList[infoList.Count-1].pos =new double[] { pos.x, pos.y, pos.z };
+            infoList[infoList.Count - 1].pos[0] = pos.x;
+            infoList[infoList.Count - 1].pos[1] = pos.y;
+            infoList[infoList.Count - 1].pos[2] = pos.z;
+            InstantiateBuild(EnemyBigType, EnemySmallType, infoList.Count - 1, infoList[infoList.Count - 1]);
+            EnemyIndex = infoList.Count - 1;
+
+            JudgeEntityInfo(infoList, EnemyIndex, ref enemyPos, ref enemyRot, ref enemyScal);
         }
 
         /// <summary>
@@ -399,6 +415,18 @@ namespace ArrowLegend.MapEditor
             List<TransformInfo> newBuild = GetCurrentEnemyInfo(true);
             JudgeEntityInfo(newBuild,  EnemyIndex, ref enemyPos, ref enemyRot, ref enemyScal);
             Debug.Log("新的建筑信息"+JsonMapper.ToJson(newBuild));
+        }
+
+        /// <summary>
+        /// 设置笔刷模板
+        /// </summary>
+        public void SetTemplate()
+        {
+            string folderName = EnemyBigTypeFolderNameList[EnemyBigType];
+            string buildName = EnemySmallAssetNameList[EnemySmallType];
+            string assetName = $"Enemy/{folderName}/{buildName}";
+            GameObject asset = Resources.Load(assetName) as GameObject;
+            SetTemplate(asset, new ProductTemplateCallBack(AddEnemy));
         }
 
     }

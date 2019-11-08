@@ -88,5 +88,13 @@ namespace ArrowLegend.MapEditor
             rot = new Vector3((float)info.rot[0], (float)info.rot[1], (float)info.rot[2]);
             scal = new Vector3((float)info.scal[0], (float)info.scal[1], (float)info.scal[2]);
         }
+
+        /// <summary>
+        /// 设置笔刷
+        /// </summary>
+        public void SetTemplate(GameObject go, ProductTemplateCallBack callBack)
+        {
+            PaintModeGridEditor.SetTemplate(go, callBack);
+        }
     }
 }

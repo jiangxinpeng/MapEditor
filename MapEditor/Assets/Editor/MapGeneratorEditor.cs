@@ -16,6 +16,7 @@ public class MapGeneratorEditor : EditorWindow
     private MapEditorSizeAndTextureHandle sizeHandle;
     private MapEditorBuildHandle buildHandle;
     private MapEditorEnemyHandle enemyHandle;
+    private MapEditorWeatherHandle weatherHandle;
 
     [MenuItem("地图编辑器/编辑地图")]
     private static void Open()
@@ -25,20 +26,19 @@ public class MapGeneratorEditor : EditorWindow
 
     private void OnEnable()
     {
-        // data = new MapEditorData();   //编辑器界面的数据和逻辑
         levelHandle = new MapEditorLevelHandle();
         sizeHandle = new MapEditorSizeAndTextureHandle();
         buildHandle = new MapEditorBuildHandle();
         enemyHandle = new MapEditorEnemyHandle();
-        //enemyHandle = new MapEditorHandle();  //地图配置的数据和逻辑(初始化等等)
+        weatherHandle = new MapEditorWeatherHandle();
         InitData();
-        //handle.EnemyEnable();
     }
 
     //关闭时保存配置信息
     private void OnDestroy()
     {
         //data.Destory(enemyHandle.levelInfo);   //先注释掉数据保存
+        weatherHandle.Destory();
         enemyHandle.Destory();
         buildHandle.Destory();
         sizeHandle.Destory();
@@ -54,7 +54,7 @@ public class MapGeneratorEditor : EditorWindow
         sizeHandle.Init();
         buildHandle.Init();
         enemyHandle.Init();
-        //enemyHandle.InitData();
+        weatherHandle.Init();
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ public class MapGeneratorEditor : EditorWindow
     /// </summary>
     private void ChangeLevel(int level)
     {
-
+        weatherHandle.ChangeLevel(level + 1);
         sizeHandle.ChangeLevel(level + 1);
         buildHandle.ChangeLevel(level + 1);
         enemyHandle.ChangeLevel(level + 1);
@@ -79,6 +79,7 @@ public class MapGeneratorEditor : EditorWindow
         sizeHandle.AfterChangeLevel();
         buildHandle.AfterChangeLevel();
         enemyHandle.AfterChangeLevel();
+        weatherHandle.AfterChangeLevel();
     }
 
     /// <summary>
@@ -91,6 +92,7 @@ public class MapGeneratorEditor : EditorWindow
         sizeHandle.CreateNewLevel();
         buildHandle.CreateNewLevel();
         enemyHandle.CreateNewLevel();
+        weatherHandle.CreateNewLevel();
     }
 
     private void OnGUI()
@@ -102,6 +104,13 @@ public class MapGeneratorEditor : EditorWindow
         BuildConfigure();
         GUILayout.Space(20);
         EnemyConfigure();
+        GUILayout.Space(20);
+        WeatherConfigure();
+    }
+
+    void OnInspectorUpdate()
+    {
+        Repaint();
     }
     /// <summary>
     /// 关卡等级配置
@@ -197,7 +206,6 @@ public class MapGeneratorEditor : EditorWindow
     /// </summary>
     private void BuildConfigure()
     {
-        EditorGUILayout.Space();
         EditorGUILayout.LabelField("地面建筑");
         EditorGUI.BeginChangeCheck();
         {
@@ -228,6 +236,11 @@ public class MapGeneratorEditor : EditorWindow
         if (GUILayout.Button("在文件夹中查看", GUILayout.Width(150)))
         {
 
+        }
+
+        if (GUILayout.Button("设为笔刷",GUILayout.Width(120)))
+        {
+            buildHandle.SetTemplate();
         }
         EditorGUILayout.EndHorizontal();
 
@@ -318,6 +331,11 @@ public class MapGeneratorEditor : EditorWindow
         {
 
         }
+
+        if (GUILayout.Button("设为笔刷", GUILayout.Width(120)))
+        {
+            enemyHandle.SetTemplate();
+        }
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
@@ -387,6 +405,31 @@ public class MapGeneratorEditor : EditorWindow
         //Debug.LogError("位置信息" + JsonMapper.ToJson(posInfo) + "编号" + handle.enemyIndex);
         //PosInfo(posInfo[handle.enemyIndex]);
 
+    }
+
+    /// <summary>
+    /// 天气配置
+    /// </summary>
+    private void WeatherConfigure()
+    {
+        EditorGUILayout.LabelField("天气设置");
+
+        EditorGUI.BeginChangeCheck();
+        {
+            weatherHandle.isDay = EditorGUILayout.ToggleLeft("白天或者黑夜(勾选为白天)", weatherHandle.isDay, GUILayout.Width(200));
+        }
+        if (EditorGUI.EndChangeCheck())
+        {
+            weatherHandle.SaveDay();
+        }
+        EditorGUI.BeginChangeCheck();
+        {
+            weatherHandle.weatherType = (WeatherType)EditorGUILayout.EnumPopup("天气选项", weatherHandle.weatherType, GUILayout.Width(300));
+        }
+        if (EditorGUI.EndChangeCheck())
+        {
+            weatherHandle.SaveWeather();
+        }
     }
 
     /// <summary>

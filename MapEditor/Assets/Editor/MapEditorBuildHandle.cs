@@ -166,7 +166,7 @@ namespace ArrowLegend.MapEditor
         }
 
         /// <summary>
-        /// 添加建筑
+        /// 添加建筑   编辑器界面加建筑
         /// </summary>
         public void AddBuild()
         {
@@ -176,6 +176,24 @@ namespace ArrowLegend.MapEditor
             InstantiateBuild(BuildBigType, BuildSmallType, infoList.Count, new TransformInfo());
             BuildIndex = infoList.Count;
             infoList.Add(new TransformInfo());
+        }
+
+        /// <summary>
+        /// 添加建筑   笔刷加建筑
+        /// </summary>
+        public void AddBuild(Vector3 pos)
+        {
+            //获取这个小类型的建筑列表
+            List<TransformInfo> infoList = GetCurrentBuildInfo(true);
+            infoList.Add(new TransformInfo());
+            //infoList[infoList.Count-1].pos =new double[] { pos.x, pos.y, pos.z };
+            infoList[infoList.Count - 1].pos[0] = pos.x;
+            infoList[infoList.Count - 1].pos[1] = pos.y;
+            infoList[infoList.Count - 1].pos[2] = pos.z;
+            InstantiateBuild(BuildBigType, BuildSmallType, infoList.Count-1, infoList[infoList.Count-1]);
+            BuildIndex = infoList.Count-1;
+
+            JudgeEntityInfo(infoList, BuildIndex, ref BuildPos, ref BuildRot, ref BuildRot);
         }
 
         /// <summary>
@@ -299,6 +317,18 @@ namespace ArrowLegend.MapEditor
             {
                 ShowBuildInfo(infoList[index]);
             }
+        }
+
+        /// <summary>
+        /// 设置笔刷模板
+        /// </summary>
+        public void SetTemplate()
+        {
+            string folderName = BuildBigTypeFolderNameList[BuildBigType];
+            string buildName = BuildSmallList[BuildSmallType];
+            string assetName = $"Build/{folderName}/{buildName}";
+            GameObject asset = Resources.Load(assetName) as GameObject;
+            SetTemplate(asset,new ProductTemplateCallBack(AddBuild));
         }
 
         /// <summary>

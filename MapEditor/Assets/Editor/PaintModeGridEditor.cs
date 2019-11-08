@@ -6,12 +6,26 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(handleTest))]
-public class TestEditor:Editor
+/// <summary>
+/// 物体的类型
+/// </summary>
+public enum ObjectType
 {
-    Vector3 cursorPosition;    //鼠标的位置
-    Vector3 curSize = new Vector3(1,1,1);
-    Editor editor;
+    Build,
+    Enemy
+}
+
+public delegate void ProductTemplateCallBack(Vector3 position);
+
+[CustomEditor(typeof(PaintModeGrid))]
+public class PaintModeGridEditor :Editor
+{
+    public static GameObject template;      //笔刷模板
+    public static ObjectType templateType;
+    private static ProductTemplateCallBack ProductTemplateCallBack;
+    Vector3 cursorPosition;      //鼠标的位置  实时刷新的
+    Vector3 curSize = new Vector3(1,1,1);  //笔刷大小
+    static Editor editor;
 
     private void OnSceneGUI()
     {
@@ -19,13 +33,11 @@ public class TestEditor:Editor
         UpdateCursorPosition();
         if (e.type==EventType.MouseDown&&e.button ==0)  //按下左键
         {
-            GameObject go =GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            go.transform.localPosition = cursorPosition;
-
+            ProductTemplate();
         }
         DrawCursor();
 
-        Selection.activeGameObject = ((handleTest)target).gameObject;
+        Selection.activeGameObject = ((PaintModeGrid)target).gameObject;
         SceneView.RepaintAll();
     }
 
@@ -33,15 +45,41 @@ public class TestEditor:Editor
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
-        if (editor==null)
+        if (template != null)
         {
-            editor = Editor.CreateEditor(((handleTest)target).gameObject);
+            if (editor == null)
+            {
+                editor = Editor.CreateEditor(template);
+            }
+            editor.DrawPreview(GUILayoutUtility.GetRect(500, 500));
+            Repaint();
         }
-        editor.DrawPreview(GUILayoutUtility.GetRect(500, 500));
-        //editor.OnPreviewGUI(GUILayoutUtility.GetRect(500, 500), EditorStyles.whiteLabel);
     }
 
+    /// <summary>
+    /// 设置笔刷模板
+    /// </summary>
+    public static void SetTemplate(GameObject go, ProductTemplateCallBack callBack)
+    {
+        template = go;
+        editor = null;
+        ProductTemplateCallBack = callBack;
+    }
 
+    /// <summary>
+    /// 产生模板
+    /// </summary>
+    private void ProductTemplate()
+    {
+        if (template==null)
+        {
+            MapGeneratorEditor.Tip("请设置笔刷！！");
+            return;
+        }
+        ProductTemplateCallBack(cursorPosition);
+        //GameObject go =Instantiate(template);
+        //go.transform.localPosition = cursorPosition;
+    }
 
     Vector3 SnapToGrid(Vector3 value)
     {

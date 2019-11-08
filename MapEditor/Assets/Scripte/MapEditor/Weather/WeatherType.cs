@@ -9,9 +9,9 @@ namespace ArrowLegend.MapEditor
 {
     public enum WeatherType
     {
+        Sunny,
         Rain,
         Thunderstorm,
-        SunnyDay,
         Clound,
     }
 }
