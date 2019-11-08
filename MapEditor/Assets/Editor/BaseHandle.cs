@@ -30,6 +30,11 @@ namespace ArrowLegend.MapEditor
         /// </summary>
         public void InstantiateEntity(string assetName,string fatherName,string smallTypeName, int index, TransformInfo info)
         {
+            if (GameObject.Find(fatherName) == null)
+            {
+                MapGeneratorEditor.Tip("先创建关卡和地图！！！！");
+                return;
+            }
             Debug.Log("资源名"+assetName);
             Debug.Log("父物体"+fatherName);
             if (GameObject.Find(fatherName+"/"+assetName))
@@ -39,6 +44,7 @@ namespace ArrowLegend.MapEditor
             GameObject go = Resources.Load(assetName) as GameObject;
             go = GameObject.Instantiate(go);
             go.name = smallTypeName + "_" + index;
+          
             go.transform.SetParent(GameObject.Find(fatherName).transform);
             go.transform.position = new Vector3((float)info.pos[0], (float)info.pos[1], (float)info.pos[2]);
         }

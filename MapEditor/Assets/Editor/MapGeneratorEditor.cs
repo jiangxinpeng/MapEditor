@@ -392,7 +392,7 @@ public class MapGeneratorEditor : EditorWindow
     /// <summary>
     /// 提示界面
     /// </summary>
-    private void Tip(string content)
+    public static void Tip(string content)
     {
         EditorUtility.DisplayDialog("提示", content, "好的");
     }
