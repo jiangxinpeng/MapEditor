@@ -1,0 +1,6 @@
+#	地面建筑-树木类型配置表				
+#	Id		DisPlayName	GameObjectName	AssetName
+#	int		string	string	string
+#	类型编号	策划备注	地图编辑器上的展示名称	产生的GameObject的名称	资源所在的路径
+	0	从0开始 对应List	大树	tree_1	Build/Tree/tree_1
+	1		小树	tree_2	Build/Tree/tree_2

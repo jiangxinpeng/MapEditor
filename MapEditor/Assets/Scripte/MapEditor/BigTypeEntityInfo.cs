@@ -12,7 +12,9 @@ namespace ArrowLegend.MapEditor
     /// </summary>
     public class BigTypeEntityInfo
     {
-        public int sum;                  //个数
+        public int Id;    //大类型怪物的编号
+
+        public int Sum;   //小类型的个数
 
         public List<SmallTypeEntityInfo> SmallTypeInfoList=new List<SmallTypeEntityInfo>();    //对应的信息
     }

@@ -1,0 +1,6 @@
+#	地面建筑-水面类型配置表				
+#	Id		DisPlayName	GameObjectName	AssetName
+#	int		string	string	string
+#	类型编号	策划备注	地图编辑器上的展示名称	产生的GameObject的名称	资源所在的路径
+	0	从0开始 对应List	大水面	water_1	Build/Water/water_1
+	1		小水面	water_2	Build/Water/water_2

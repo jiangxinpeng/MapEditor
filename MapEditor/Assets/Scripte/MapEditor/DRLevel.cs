@@ -16,10 +16,6 @@ namespace ArrowLegend.MapEditor
 
         public string groundMaterial;    //地图纹理ID
 
-        public BigTypeEntityInfo entranceInfo;        //玩家入口信息
-
-        public BigTypeEntityInfo exportInfo;           //玩家出口信息
-
         public LevelCorrespondBuildInfo BuildInfo;  //关卡对应的建筑信息
 
         public LevelCorrespondEnemy enemyTimesInfo;   //关卡对应的怪物的信息

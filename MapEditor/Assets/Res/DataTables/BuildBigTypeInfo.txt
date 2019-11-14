@@ -1,0 +1,10 @@
+#	地面建筑大类型配置表				
+#	Id		DisPlayName	GameObjectName	ChildrenSum
+#	int		string	string	int
+#	类型编号	策划备注	地图编辑器上的展示名称	产生的GameObject的名称	子类型的数量
+	0	从0开始 对应List	边界墙	BoundWall	2
+	1		草地	Grass	2
+	2		树木	Tree	2
+	3		石头	Stone	2
+	4		路刺	Stab	2
+	5		水面	Water	2

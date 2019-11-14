@@ -12,7 +12,7 @@ namespace ArrowLegend.MapEditor
     /// </summary>
     public class SmallTypeEntityInfo
     {
-        public int Sum;                  //个数
+        public int Id;     //编号
 
         public List<TransformInfo> infoList=new List<TransformInfo>();    //对应的信息
     }
