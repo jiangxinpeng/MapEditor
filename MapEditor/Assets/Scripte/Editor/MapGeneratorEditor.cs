@@ -272,6 +272,10 @@ public class MapGeneratorEditor : EditorWindow
             buildHandle.SaveBuildTransInfo(buildHandle.BuildOldIndex, 1);
             buildHandle.AddBuild();
         }
+        if (GUILayout.Button("删除该建筑", GUILayout.Width(150)))
+        {
+            buildHandle.DelectGamObject();
+        }
         EditorGUILayout.EndHorizontal();
 
         buildHandle.BuildPos = EditorGUILayout.Vector3Field("位置", buildHandle.BuildPos, GUILayout.Width(300));
@@ -365,6 +369,10 @@ public class MapGeneratorEditor : EditorWindow
         {
             enemyHandle.SaveEnemyTransInfo(enemyHandle.EnemyIndex, 1);
             enemyHandle.AddEnemy();
+        }
+        if (GUILayout.Button("删除该怪物", GUILayout.Width(150)))
+        {
+            enemyHandle.DelectGamObject();
         }
         EditorGUILayout.EndHorizontal();
 

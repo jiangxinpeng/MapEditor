@@ -249,7 +249,9 @@ namespace ArrowLegend.MapEditor
             EnemyIndex = infoList.Count;
             infoList.Add(new TransformInfo());
             InstantiateEnemy(EnemyBigType, EnemySmallType, infoList.Count-1, infoList[infoList.Count - 1]);
-          
+
+            JudgeEntityInfo(infoList, EnemyIndex, ref enemyPos, ref enemyRot, ref enemyScal);
+
         }
         /// <summary>
         /// 添加怪物   笔刷加怪物
@@ -457,7 +459,7 @@ namespace ArrowLegend.MapEditor
 
         public void ShowSelectionInfo(GameObject go)
         {
-            if (go?.transform?.parent?.parent.name == "Enemy")  //选中的是建筑信息
+            if (go?.transform?.parent?.parent?.parent?.parent?.name == "Enemy")  //选中的是怪物信息
             {
                 for (int i = 0; i < EnemyBigTypeFolderNameList.Length; i++)
                 {
@@ -465,18 +467,19 @@ namespace ArrowLegend.MapEditor
                     {
                         //先把之前的保存起来
                         SaveEnemyTransInfo(EnemyIndex, 3);
-
                         EnemyBigType = i;    //大类型的编号
                         ChangeToolBar();
-                        for (int j = 0; j < EnemySmallList.Length; j++)
+                        for (int j = 0; j < EnemySmallAssetNameList.Length; j++)
                         {
-                            if (go.name.StartsWith(EnemySmallList[j]))
+                            if (go.name.StartsWith(EnemySmallAssetNameList[j]))
                             {
+                                Debug.Log("2");
+
                                 EnemySmallType = j;    //小类型的编号
                                 ShowEnemyName();
 
                                 string[] name = go.name.Split('_');
-                                EnemyIndex = Convert.ToInt32(name[2]);   //建筑物的编号
+                                EnemyIndex = Convert.ToInt32(name[1]);   //怪物的编号
                                 currentGameObject = go;
                                 return;
                             }
@@ -484,6 +487,38 @@ namespace ArrowLegend.MapEditor
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 删除当前的GamObject
+        /// </summary>
+        public void DelectGamObject()
+        {
+            Transform parent = GameObject.Find($"Enemy/Level_{MapGeneratorEditor.levelInfo.levelId}/Time_{EnemyTime+1}/{EnemyBigTypeFolderNameList[EnemyBigType]}").transform;
+            GameObject go = parent.Find($"{EnemySmallAssetNameList[EnemySmallType]}_{EnemyIndex}").gameObject;
+            if (go == null)
+            {
+                MapGeneratorEditor.Tip("没有找到要删除的GameObject");
+            }
+            EnemyList.RemoveAt(EnemyIndex);
+            GameObject.DestroyImmediate(go);
+
+            //全部重命名
+            for (int i = 0; i < EnemyList.Count; i++)
+            {
+                Transform transforms = parent.GetChild(i);
+                transforms.name = $"{EnemySmallAssetNameList[EnemySmallType]}_{i}";
+            }
+
+            //对应的levelInfo数据也删除
+            List<TransformInfo> list = levelCorrespondEnemyInfo.timesEnemyList[EnemyTime].BigTypeInfoList[EnemyBigType].SmallTypeInfoList[EnemySmallType].infoList;
+
+            list.RemoveAt(EnemyIndex);
+
+            //删除后设置默认数据
+            EnemyIndex = 0;
+            JudgeEntityInfo(list,0, ref enemyPos, ref enemyRot, ref enemyScal);
+
         }
 
     }

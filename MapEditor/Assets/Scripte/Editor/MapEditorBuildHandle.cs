@@ -189,7 +189,7 @@ namespace ArrowLegend.MapEditor
             infoList.Add(new TransformInfo());
 
             InstantiateBuild(BuildBigType, BuildSmallType, infoList.Count - 1, infoList[infoList.Count - 1]);
-
+            JudgeEntityInfo(infoList, BuildIndex, ref BuildPos, ref BuildRot, ref BuildScal);
         }
 
         /// <summary>
@@ -369,7 +369,7 @@ namespace ArrowLegend.MapEditor
         }
 
         /// <summary>
-        /// 编辑器界面的显示数据展示当前选中的物体的信息  暂时先放这  不做
+        /// 编辑器界面的显示数据展示当前选中的物体的信息 
         /// </summary>
         public void ShowSelectionInfo(GameObject go)
         {
@@ -400,6 +400,35 @@ namespace ArrowLegend.MapEditor
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 删除当前的GamObject
+        /// </summary>
+        public void DelectGamObject()
+        {
+            Transform parent = GameObject.Find($"Build/{BuildBigTypeFolderNameList[BuildBigType]}").transform ;
+            GameObject go = parent.Find($"{BuildSmallList[BuildSmallType]}_{BuildIndex}").gameObject;
+            if (go==null)
+            {
+                MapGeneratorEditor.Tip("没有找到要删除的GameObject");
+            }
+            BuildList.RemoveAt(BuildIndex);
+            GameObject.DestroyImmediate(go);
+
+            //全部重命名
+            for (int i=0;i< BuildList.Count;i++)
+            {
+                Transform transforms = parent.GetChild(i);
+                transforms.name = $"{BuildSmallList[BuildSmallType]}_{i}";
+            }
+
+            //对应的levelInfo数据也删除
+            levelCorrespondBuildInfo.BigTypeInfoList[BuildBigType].SmallTypeInfoList[BuildSmallType].infoList.RemoveAt(BuildIndex);
+
+            //删除后设置默认数据
+            BuildIndex = 0;
+            ShowBuildInfo(levelCorrespondBuildInfo.BigTypeInfoList[BuildBigType].SmallTypeInfoList[BuildSmallType].infoList[BuildIndex]);
         }
 
 
