@@ -16,7 +16,9 @@ namespace ArrowLegend.MapEditor
 
         //怪物的设置参数
         public int EnemyTime;          //怪物当前波次
-        public TimesEnemyProduceType ProductTypeIndex = TimesEnemyProduceType.Defalut;          //产生时机
+        public TimesEnemyProduceType ProductTypeIndex = TimesEnemyProduceType.Interval;          //产生时机
+        public double productTime = 10;  //默认产生间隔时间
+
         public List<string> timesList = new List<string>();   //波次列表
 
         public string[] enemyToolBarString = new string[] { "陆地小怪", "陷阱小怪", "飞行小怪", "小头目", "大头目" };
@@ -80,6 +82,8 @@ namespace ArrowLegend.MapEditor
             }
             GameObject go = new GameObject("Level_" + GetLevelID());
             go.transform.SetParent(GameObject.Find("Enemy").transform);
+           // go.transform.localPosition = new Vector3((GetLevelID() - 1) * 33, 0, 0);
+
         }
 
         private int GetLevelID()
@@ -90,6 +94,10 @@ namespace ArrowLegend.MapEditor
 
         public void ChangeLevel(int level)
         {
+            if (level!=0)  //不是从创建新的关卡过来的
+            {
+                SaveEnemyProductTime();   //保存上一波的时间
+            }
             EnemyTime = 0;
             ChangeTimes();
         }
@@ -101,6 +109,7 @@ namespace ArrowLegend.MapEditor
             CreateLevelParent();
             InitBigTypeGameObject();
             InitEnemy(EnemyTime);
+
         }
 
         public void CreateNewLevel()
@@ -116,6 +125,8 @@ namespace ArrowLegend.MapEditor
         /// </summary>
         public void CreateNewTime()
         {
+            SaveEnemyProductTime();   //保存上一波的时间
+
             levelCorrespondEnemyInfo.timesEnemyList.Add(new TimesCorrespondEnemy());
             EnemyTime = timesList.Count;
             BindBuildInfo();
@@ -170,7 +181,6 @@ namespace ArrowLegend.MapEditor
         /// </summary>
         private void AddTimeList()
         {
-            Debug.Log("添加");
             timesList.Add($"第{timesList.Count + 1}波怪物配置");
         }
 
@@ -212,6 +222,8 @@ namespace ArrowLegend.MapEditor
         /// </summary>
         private void InitEnemy(int index)
         {
+            productTime = levelCorrespondEnemyInfo.timesEnemyList[index].ProductTime;
+
             List<BigTypeEntityInfo> bigTypeEntityInfos = levelCorrespondEnemyInfo.timesEnemyList[index].BigTypeInfoList;
 
             for (int i = 0; i < bigTypeEntityInfos.Count; i++)
@@ -244,6 +256,7 @@ namespace ArrowLegend.MapEditor
         /// </summary>
         public void AddEnemy()
         {
+            levelCorrespondEnemyInfo.timesEnemyList[EnemyTime].Sum++;
             //获取这个小类型的建筑列表
             List<TransformInfo> infoList = GetCurrentEnemyInfo(true);
             EnemyIndex = infoList.Count;
@@ -258,6 +271,7 @@ namespace ArrowLegend.MapEditor
         /// </summary>
         public void AddEnemy(Vector3 pos)
         {
+            levelCorrespondEnemyInfo.timesEnemyList[EnemyTime].Sum++;
             //获取这个小类型的建筑列表
             List<TransformInfo> infoList = GetCurrentEnemyInfo(true);
             infoList.Add(new TransformInfo());
@@ -362,7 +376,6 @@ namespace ArrowLegend.MapEditor
             int time = isNew ? EnemyTime : EnemyOldTime;
             int bigType = isNew ? EnemyBigType : EnemyOldBigType;
             int smallType = isNew ? EnemySmallType : EnemyOldSmallType;
-            Debug.Log("波次"+time+"怪物大编号：" + bigType + "  " + "小编号" + smallType);
 
             BigTypeEntityInfo bigTypeEntityInfo = GetCurrentTimeEnemyInfo(time).BigTypeInfoList[bigType];
             SmallTypeEntityInfo smallTypeEntityInfo = bigTypeEntityInfo.SmallTypeInfoList[smallType];
@@ -381,7 +394,6 @@ namespace ArrowLegend.MapEditor
             EnemyIndex = 0;
             //获取这个小类型的建筑列表
             List<TransformInfo> infoList = GetCurrentEnemyInfo(true);
-            Debug.Log("怪物信息"+JsonMapper.ToJson(infoList));
             for (int i = 0; i < infoList.Count; i++)  //
             {
                 AddEntityList(EnemyList, EnemySmallList[EnemySmallType], i);
@@ -397,8 +409,6 @@ namespace ArrowLegend.MapEditor
             currentGameObject = null;
 
             List<TransformInfo> enemys = GetCurrentEnemyInfo(false);
-            Debug.Log("保存的建筑信息 "+index+" "+JsonMapper.ToJson(enemys));
-            Debug.Log($"{enemyPos[0]},{enemyRot[1]},{enemyScal[2]}");
             //如果要保存的建筑为空，则不储存
             if (enemys.Count > index)
             {
@@ -406,6 +416,7 @@ namespace ArrowLegend.MapEditor
                 enemys[index].rot = new double[] { Math.Round(enemyRot[0],2), Math.Round(enemyRot[1],2), Math.Round(enemyRot[2],2) };
                 enemys[index].scal = new double[] { Math.Round(enemyScal[0],2), Math.Round(enemyScal[1],2), Math.Round(enemyScal[2],2) };
             }
+            SaveEnemyProductTime();
 
             switch (time)
             {
@@ -427,7 +438,14 @@ namespace ArrowLegend.MapEditor
             //获得的新的建筑的信息是空的话  位置是默认的
             List<TransformInfo> newBuild = GetCurrentEnemyInfo(true);
             JudgeEntityInfo(newBuild,  EnemyIndex, ref enemyPos, ref enemyRot, ref enemyScal);
-            Debug.Log("新的建筑信息"+JsonMapper.ToJson(newBuild));
+        }
+
+        /// <summary>
+        /// 保存每一波的怪物产生时间
+        /// </summary>
+        private void SaveEnemyProductTime()
+        {
+            levelCorrespondEnemyInfo.timesEnemyList[EnemyOldTime].ProductTime = productTime;
         }
 
         /// <summary>
@@ -473,8 +491,6 @@ namespace ArrowLegend.MapEditor
                         {
                             if (go.name.StartsWith(EnemySmallAssetNameList[j]))
                             {
-                                Debug.Log("2");
-
                                 EnemySmallType = j;    //小类型的编号
                                 ShowEnemyName();
 
@@ -495,13 +511,15 @@ namespace ArrowLegend.MapEditor
         public void DelectGamObject()
         {
             Transform parent = GameObject.Find($"Enemy/Level_{MapGeneratorEditor.levelInfo.levelId}/Time_{EnemyTime+1}/{EnemyBigTypeFolderNameList[EnemyBigType]}").transform;
-            GameObject go = parent.Find($"{EnemySmallAssetNameList[EnemySmallType]}_{EnemyIndex}").gameObject;
+            GameObject go = parent.Find($"{EnemySmallAssetNameList[EnemySmallType]}_{EnemyIndex}")?.gameObject;
             if (go == null)
             {
                 MapGeneratorEditor.Tip("没有找到要删除的GameObject");
+                return;
             }
             EnemyList.RemoveAt(EnemyIndex);
             GameObject.DestroyImmediate(go);
+            levelCorrespondEnemyInfo.timesEnemyList[EnemyTime].Sum--;
 
             //全部重命名
             for (int i = 0; i < EnemyList.Count; i++)
@@ -517,7 +535,11 @@ namespace ArrowLegend.MapEditor
 
             //删除后设置默认数据
             EnemyIndex = 0;
-            JudgeEntityInfo(list,0, ref enemyPos, ref enemyRot, ref enemyScal);
+
+            if (list.Count != 0)
+            {
+                JudgeEntityInfo(list, 0, ref enemyPos, ref enemyRot, ref enemyScal);
+            }
 
         }
 

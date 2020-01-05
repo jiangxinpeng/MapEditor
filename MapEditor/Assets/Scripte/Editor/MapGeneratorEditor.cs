@@ -39,12 +39,30 @@ public class MapGeneratorEditor : EditorWindow
     private void OnDestroy()
     {
         //data.Destory(enemyHandle.levelInfo);   //先注释掉数据保存
+      
         weatherHandle.Destory();
         enemyHandle.Destory();
         buildHandle.Destory();
         sizeHandle.Destory();
         levelHandle.Destory();  //最后释放
+
+        DestoryMapGame("Ground");
+        DestoryMapGame("Enemy");
+
         AssetDatabase.Refresh();
+    }
+
+    /// <summary>
+    /// 删除地图的GameObject信息
+    /// </summary>
+    private void DestoryMapGame(string str)
+    {
+        DestroyImmediate(GameObject.Find(str));
+        GameObject go = new GameObject(str);
+        go.transform.SetParent(GameObject.Find("Map").transform);
+        go.transform.localPosition = Vector3.zero;
+        go.transform.localEulerAngles = Vector3.zero;
+        go.transform.localScale = Vector3.one;
     }
 
     private void OnSelectionChange()
@@ -113,6 +131,12 @@ public class MapGeneratorEditor : EditorWindow
         EnemyConfigure();
         GUILayout.Space(20);
         WeatherConfigure();
+
+    }
+
+    private void OnHierarchyChange()
+    {
+        
     }
 
     void OnInspectorUpdate()
@@ -121,6 +145,25 @@ public class MapGeneratorEditor : EditorWindow
         enemyHandle.RepaintCurrentEnemy();
         Repaint();
     }
+
+    /// <summary>
+    /// 隐藏其他关卡的建筑
+    /// </summary>
+    /// <param name="level"></param>
+    void UnEnableOther(int level=-1)
+    {
+        for (int i = 1; i <= levelHandle.topLevel; i++)
+        {
+            if (i == level)
+            {
+                continue;
+            }
+
+            GameObject.Find($"ground_{i}")?.SetActive(false);
+            GameObject.Find($"Level_{i}")?.SetActive(false);
+        }
+    }
+
     /// <summary>
     /// 关卡等级配置
     /// </summary>
@@ -138,10 +181,13 @@ public class MapGeneratorEditor : EditorWindow
         {
             Debug.Log("选择的序号是" + levelHandle.LevelIndex);
             ChangeLevel(levelHandle.LevelIndex);
+
+            UnEnableOther(levelHandle.LevelIndex+1);
         }
         if (GUILayout.Button("添加新关卡", GUILayout.Width(100)))
         {
             CreateNewLevel();
+            UnEnableOther();
             AssetDatabase.Refresh();
         }
         GUILayout.EndHorizontal();
@@ -317,6 +363,8 @@ public class MapGeneratorEditor : EditorWindow
         EditorGUILayout.EndHorizontal();
 
         enemyHandle.ProductTypeIndex = (TimesEnemyProduceType)EditorGUILayout.EnumPopup("产生时机", enemyHandle.ProductTypeIndex, GUILayout.Width(300));
+
+        enemyHandle.productTime = EditorGUILayout.DoubleField("距离上一波的时间", enemyHandle.productTime, GUILayout.Width(300));
 
         EditorGUI.BeginChangeCheck();
         {

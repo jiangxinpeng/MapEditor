@@ -37,8 +37,7 @@ namespace ArrowLegend.MapEditor
                 MapGeneratorEditor.Tip("先创建关卡和地图！！！！");
                 return;
             }
-            Debug.Log("资源名"+assetName);
-            Debug.Log("父物体"+fatherName);
+
             if (GameObject.Find(fatherName+"/"+assetName))
             {
                 return;
@@ -94,7 +93,6 @@ namespace ArrowLegend.MapEditor
         /// <param name="scal"></param>
         private void ShowEntityInfo(TransformInfo info, ref Vector3 pos, ref Vector3 rot, ref Vector3 scal)
         {
-            Debug.Log("位置信息" + JsonMapper.ToJson(info));
             pos = new Vector3((float)info.pos[0], (float)info.pos[1], (float)info.pos[2]);
             rot = new Vector3((float)info.rot[0], (float)info.rot[1], (float)info.rot[2]);
             scal = new Vector3((float)info.scal[0], (float)info.scal[1], (float)info.scal[2]);

@@ -101,12 +101,14 @@ namespace ArrowLegend.MapEditor
             {
                 if (GameObject.Find("ground_" + MapGeneratorEditor.levelInfo.levelId) != null)
                 {
-                    GameObject.DestroyImmediate(GameObject.Find("ground_" + MapGeneratorEditor.levelInfo.levelId));
+                     GameObject.DestroyImmediate(GameObject.Find("ground_" + MapGeneratorEditor.levelInfo.levelId));
+                   // return;
                 }
                 ground = new GameObject("ground_" + MapGeneratorEditor.levelInfo.levelId);
                 Transform transform = ground.transform;
                 transform.SetParent(GameObject.Find("Ground").transform);
                 transform.localPosition = Vector3.zero;
+                //transform.localPosition = new Vector3((MapGeneratorEditor.levelInfo.levelId-1)*33,0,0);
                 groundMeshFilter = ground.AddComponent<MeshFilter>();
                 UpdateMesh(groundMeshFilter);
                 ground.AddComponent<MeshRenderer>();

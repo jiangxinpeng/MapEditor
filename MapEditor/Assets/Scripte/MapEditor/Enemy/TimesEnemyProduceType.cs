@@ -9,13 +9,11 @@ using System.Text;
     /// </summary>
    public enum TimesEnemyProduceType
     {
-
-        Defalut,
-        /// <summary>
-        /// 上一波结束之后
-        /// </summary>
-        After,
-
+        //Defalut,
+        ///// <summary>
+        ///// 上一波结束之后
+        ///// </summary>
+        //After,
         /// <summary>
         /// 游戏开始之后的间隔时间
         /// </summary>

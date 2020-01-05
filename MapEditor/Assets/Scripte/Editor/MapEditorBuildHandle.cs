@@ -237,7 +237,6 @@ namespace ArrowLegend.MapEditor
         {
             int bigType = isNew ? BuildBigType : BuildOldBigType;
             int smallType = isNew ? BuildSmallType : BuildOldSmallType;
-            Debug.Log("建筑大编号：" + bigType + "  " + "小编号" + smallType);
 
             BigTypeEntityInfo bigTypeEntityInfo = levelCorrespondBuildInfo.BigTypeInfoList[bigType];
             SmallTypeEntityInfo smallTypeEntityInfo = bigTypeEntityInfo.SmallTypeInfoList[smallType];
@@ -275,7 +274,6 @@ namespace ArrowLegend.MapEditor
 
             //currentGameObject = GameObject.Find(fatherName);
 
-            Debug.Log("位置信息" + JsonMapper.ToJson(info));
             BuildPos = new Vector3((float)info.pos[0], (float)info.pos[1], (float)info.pos[2]);
             BuildRot = new Vector3((float)info.rot[0], (float)info.rot[1], (float)info.rot[2]);
             BuildScal = new Vector3((float)info.scal[0], (float)info.scal[1], (float)info.scal[2]);
@@ -288,10 +286,8 @@ namespace ArrowLegend.MapEditor
         {
             currentGameObject = null;
 
-            Debug.Log("保存建筑位置信息编号" + index);
             //Debug.Log($"{BuildPos[0]},{BuildPos[1]},{BuildPos[2]}");
             List<TransformInfo> builds = GetCurrentBuildInfo(false);
-            Debug.Log(JsonMapper.ToJson(builds));
             //如果要保存的建筑为空，则不储存
             if (builds.Count > index)
             {
@@ -299,6 +295,7 @@ namespace ArrowLegend.MapEditor
                 builds[index].rot = new double[] { Math.Round(BuildRot[0], 2), Math.Round(BuildRot[1], 2), Math.Round(BuildRot[2], 2) };
                 builds[index].scal = new double[] { Math.Round(BuildScal[0], 2), Math.Round(BuildScal[1], 2), Math.Round(BuildScal[2], 2) };
             }
+
 
             switch (time)
             {
@@ -373,7 +370,7 @@ namespace ArrowLegend.MapEditor
         /// </summary>
         public void ShowSelectionInfo(GameObject go)
         {
-            if (go?.transform?.parent?.parent.name == "Build")  //选中的是建筑信息
+            if (go?.transform?.parent?.parent?.name == "Build")  //选中的是建筑信息
             {
                 for (int i = 0; i < BuildBigTypeFolderNameList.Length; i++)
                 {
@@ -408,11 +405,12 @@ namespace ArrowLegend.MapEditor
         public void DelectGamObject()
         {
             Transform parent = GameObject.Find($"Build/{BuildBigTypeFolderNameList[BuildBigType]}").transform ;
-            GameObject go = parent.Find($"{BuildSmallList[BuildSmallType]}_{BuildIndex}").gameObject;
-            if (go==null)
+            if (parent.Find($"{BuildSmallList[BuildSmallType]}_{BuildIndex}") == null)
             {
                 MapGeneratorEditor.Tip("没有找到要删除的GameObject");
+                return;
             }
+            GameObject go = parent.Find($"{BuildSmallList[BuildSmallType]}_{BuildIndex}").gameObject;
             BuildList.RemoveAt(BuildIndex);
             GameObject.DestroyImmediate(go);
 
@@ -428,7 +426,10 @@ namespace ArrowLegend.MapEditor
 
             //删除后设置默认数据
             BuildIndex = 0;
-            ShowBuildInfo(levelCorrespondBuildInfo.BigTypeInfoList[BuildBigType].SmallTypeInfoList[BuildSmallType].infoList[BuildIndex]);
+            if (levelCorrespondBuildInfo.BigTypeInfoList[BuildBigType].SmallTypeInfoList[BuildSmallType].infoList.Count!=0)
+            {
+                ShowBuildInfo(levelCorrespondBuildInfo.BigTypeInfoList[BuildBigType].SmallTypeInfoList[BuildSmallType].infoList[BuildIndex]);
+            }
         }
 
 

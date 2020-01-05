@@ -15,7 +15,7 @@ namespace ArrowLegend.MapEditor
     {
         private static string levelConfigurePath = "Assets/LevelConfigure";  //关卡配置文件的路径
         private int currLevel = 0;     //当前关卡   从1开始
-        private int topLevel = 0;      //最高关卡   从1开始
+        public int topLevel = 0;      //最高关卡   从1开始
 
         public int LevelIndex = 0;    //关卡下拉列表的索引   从0开始
         public List<string> levelNameList;   //关卡列表
@@ -86,7 +86,6 @@ namespace ArrowLegend.MapEditor
             }
             MapGeneratorEditor.levelInfo.levelId = level;
             string str = JsonMapper.ToJson(MapGeneratorEditor.levelInfo);
-            Debug.Log("保存的json数据" + str);
             File.AppendAllText(GetFileName(level), str, System.Text.Encoding.UTF8);
         }
 
