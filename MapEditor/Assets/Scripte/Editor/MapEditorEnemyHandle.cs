@@ -22,7 +22,7 @@ namespace ArrowLegend.MapEditor
         public List<string> timesList = new List<string>();   //波次列表
 
         public string[] enemyToolBarString = new string[] { "陆地小怪", "陷阱小怪", "飞行小怪", "小头目", "大头目" };
-        public static string[] landTypeArray = new string[] { "野狗", "爬虫", "口水兵" };
+        public static string[] landTypeArray = new string[] { "野狗", "巨型野狗", "阿努比斯Boss" };
         public static string[] trapTypeArray = new string[] { "吸血蜘蛛", "吞噬怪", "粘液怪" };
         public static string[] flyTypeArray = new string[] { "毒蜂", "毒蝶", "蜈蚣" };
         public static string[] smallBossTypeArray = new string[] { "独角兽", "巨胖尸怪" };
@@ -30,7 +30,7 @@ namespace ArrowLegend.MapEditor
 
         public static string[] EnemyBigTypeFolderNameList = new string[] { "Land", "Trap", "Fly", "SmallBoss", "BigBoss" };
 
-        public static string[] landAssetNameArray = new string[] { "dog", "crawler", "moutSailor" };
+        public static string[] landAssetNameArray = new string[] { "dog", "bigDog", "dogBoss" };
         public static string[] trapAssetNameArray = new string[] { "spider", "eatStrange", "mucusStrange" };
         public static string[] flyAssetNameArray = new string[] { "PoisonBee", "PoisonControl", "Centipede" };
         public static string[] smallBossAssetNameArray = new string[] { "Unicorn", "fatBody" };
