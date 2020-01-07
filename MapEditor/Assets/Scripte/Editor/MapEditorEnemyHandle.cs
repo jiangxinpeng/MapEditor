@@ -56,11 +56,11 @@ namespace ArrowLegend.MapEditor
         public int EnemyOldSmallType;       //切换之前旧的小类型
         public int EnemyOldIndex;          //切换编号之前旧的编号
 
-        public bool IsPatrol;     //是否在点之间巡逻
         public int PointOldIndex;   //怪物巡逻点的旧编号
         public int PointIndex;    //怪物巡逻点编号
         public List<string> PointList = new List<string>();
         public Vector3 PointPos;   //巡逻点的坐标
+        private GameObject point;    //选中的巡逻点的物体
 
         public void Init()
         {
@@ -413,6 +413,31 @@ namespace ArrowLegend.MapEditor
         }
 
         /// <summary>
+        /// 显示选中的巡逻点
+        /// </summary>
+        public void ShowSelectPoint(GameObject go)
+        {
+            if (go?.transform?.parent?.parent?.parent?.parent?.parent?.name == "Enemy")
+            {
+                ShowSelectionInfo(go.transform.parent.gameObject);
+                point = go;
+                string[] str = point.name.Split('_');
+                PointIndex =Convert.ToInt32(str[1])-1;
+                InitPointPos(PointIndex);
+            }
+        }
+
+        public void RepaintCurrentPoint()
+        {
+            if (point == null)
+            {
+                return;
+            }
+
+            PointPos = point.transform.position;
+        }
+
+        /// <summary>
         /// 初始化巡逻点
         /// </summary>
         public void InitPointPos(int index)
@@ -436,7 +461,7 @@ namespace ArrowLegend.MapEditor
             PointPos = new Vector3((float)d[0], (float)d[1], (float)d[2]);
             for (int i=1;i<= count; i++)
             {
-                PointList.Add("巡逻点" + i + "号");
+                PointList.Add("巡逻点_" + i);
             }
         }
 
@@ -450,8 +475,11 @@ namespace ArrowLegend.MapEditor
             {
                 Vector3 pos = new Vector3((float)info.patrolList[i][0], (float)info.patrolList[i][1], (float)info.patrolList[i][2]);
                 GameObject point = GameObject.Instantiate(asset, pos, Quaternion.identity);
-                point.name = $"{EnemySmallList[small]}编号{index} 巡逻点{ i+1}号";
-                point.transform.SetParent(GameObject.Find("Map/Point").transform);
+                point.name = $"巡逻点_{i + 1}";
+                Transform parent = GameObject.Find($"{EnemySmallAssetNameList[small]}_{index}").transform;
+                point.transform.SetParent(parent);
+                //point.name = $"类型 {EnemySmallList[small]} 编号{index} 巡逻点{i+1}号";
+                //point.transform.SetParent(GameObject.Find("Map/Point").transform);
             }
         }
 
@@ -476,7 +504,7 @@ namespace ArrowLegend.MapEditor
                 return;
             }
             newEnemy[EnemyIndex].patrolList.Add(new double[] { 0,0,0});
-            PointList.Add("巡逻点" + newEnemy[EnemyIndex].patrolList.Count+"号");
+            PointList.Add("巡逻点_" + newEnemy[EnemyIndex].patrolList.Count);
             PointIndex = newEnemy[EnemyIndex].patrolList.Count - 1;
 
             PointPos = Vector3.zero;
@@ -498,13 +526,17 @@ namespace ArrowLegend.MapEditor
                 return;
             }
             newEnemy[EnemyIndex].patrolList.Add(new double[] { pos.x, pos.y, pos.z });
-            PointList.Add("巡逻点" + newEnemy[EnemyIndex].patrolList.Count + "号");
+            PointList.Add("巡逻点_" + newEnemy[EnemyIndex].patrolList.Count);
             PointIndex = newEnemy[EnemyIndex].patrolList.Count - 1;
 
             GameObject asset = Resources.Load("point") as GameObject;
             GameObject point = GameObject.Instantiate(asset, pos, Quaternion.identity);
-            point.name = $"{EnemyList[EnemyIndex]} 巡逻点{ newEnemy[EnemyIndex].patrolList.Count}号";
-            point.transform.SetParent(GameObject.Find("Map/Point").transform);
+
+            point.name = $"巡逻点_{newEnemy[EnemyIndex].patrolList.Count}";
+            Transform parent = GameObject.Find($"{EnemySmallAssetNameList[EnemySmallType]}_{EnemyIndex}").transform;
+            point.transform.SetParent(parent);
+
+            //point.transform.SetParent(GameObject.Find("Map/Point").transform);
         }
 
         /// <summary>
@@ -512,6 +544,8 @@ namespace ArrowLegend.MapEditor
         /// </summary>
         public void SavePointPos(int index)
         {
+            point = null;
+
             List<TransformInfo> newEnemy = GetCurrentEnemyInfo(true);
             if (newEnemy.Count <= 0)
             {
@@ -540,18 +574,32 @@ namespace ArrowLegend.MapEditor
                 return;
             }
 
-            PointList.RemoveAt(PointIndex);
-
             List<TransformInfo> newEnemy = GetCurrentEnemyInfo(true);
             if (newEnemy.Count <= 0)
             {
                 MapGeneratorEditor.Tip("请先创建相应的怪物");
                 return;
             }
-            GameObject.DestroyImmediate(GameObject.Find($"{EnemyList[EnemyIndex]} 巡逻点{ newEnemy[EnemyIndex].patrolList.Count}号"));
+            Debug.Log($"{EnemySmallAssetNameList[EnemySmallType]}_{EnemyIndex}/巡逻点_{PointIndex+1}");
+
+            Transform parent = GameObject.Find($"{EnemySmallAssetNameList[EnemySmallType]}_{EnemyIndex}").transform;
+            GameObject.DestroyImmediate(parent.Find($"巡逻点_{PointIndex + 1}").gameObject);
+            //全部重命名
+            int index = 1;
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform transforms = parent.GetChild(i);
+                if (transforms.name.StartsWith("巡逻点"))
+                {
+                    transforms.name = $"巡逻点_{index}";
+                    index++;
+                }
+            }
+
+            PointList.RemoveAt(PointIndex);
             newEnemy[EnemyIndex].patrolList.RemoveAt(PointIndex);
-            PointIndex = newEnemy[EnemyIndex].patrolList.Count - 1;
-            if (PointIndex<0)
+            PointIndex = 0;
+            if (newEnemy[EnemyIndex].patrolList.Count <= 0)
             {
                 PointPos = new Vector3(0,0,0);
                 return;

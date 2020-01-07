@@ -70,6 +70,7 @@ public class MapGeneratorEditor : EditorWindow
     {
         buildHandle.ShowSelectionInfo(Selection.activeGameObject);
         enemyHandle.ShowSelectionInfo(Selection.activeGameObject);
+        enemyHandle.ShowSelectPoint(Selection.activeGameObject);
     }
 
     //初始化数据
@@ -144,6 +145,7 @@ public class MapGeneratorEditor : EditorWindow
     {
         buildHandle.RepaintCurrentBuild();
         enemyHandle.RepaintCurrentEnemy();
+        enemyHandle.RepaintCurrentPoint();
         Repaint();
     }
 
@@ -305,11 +307,11 @@ public class MapGeneratorEditor : EditorWindow
             buildHandle.SaveBuildTransInfo(buildHandle.BuildOldIndex, 1);
         }
 
-        if (GUILayout.Button("添加新的建筑", GUILayout.Width(150)))
-        {
-            buildHandle.SaveBuildTransInfo(buildHandle.BuildOldIndex, 1);
-            buildHandle.AddBuild();
-        }
+        //if (GUILayout.Button("添加新的建筑", GUILayout.Width(150)))
+        //{
+        //    buildHandle.SaveBuildTransInfo(buildHandle.BuildOldIndex, 1);
+        //    buildHandle.AddBuild();
+        //}
         if (GUILayout.Button("删除该建筑", GUILayout.Width(150)))
         {
             buildHandle.DelectGamObject();
@@ -405,11 +407,11 @@ public class MapGeneratorEditor : EditorWindow
             enemyHandle.SaveEnemyTransInfo(enemyHandle.EnemyOldIndex, 1);
         }
 
-        if (GUILayout.Button("添加新的怪物", GUILayout.Width(150)))
-        {
-            enemyHandle.SaveEnemyTransInfo(enemyHandle.EnemyIndex, 1);
-            enemyHandle.AddEnemy();
-        }
+        //if (GUILayout.Button("添加新的怪物", GUILayout.Width(150)))
+        //{
+        //    enemyHandle.SaveEnemyTransInfo(enemyHandle.EnemyIndex, 1);
+        //    enemyHandle.AddEnemy();
+        //}
         if (GUILayout.Button("删除该怪物", GUILayout.Width(150)))
         {
             enemyHandle.DelectGamObject();
@@ -472,7 +474,6 @@ public class MapGeneratorEditor : EditorWindow
     /// </summary>
     private void EnemyPatrol()
     {
-        enemyHandle.IsPatrol = EditorGUILayout.ToggleLeft("是否巡逻", enemyHandle.IsPatrol, GUILayout.Width(200));
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("巡逻点编号", GUILayout.Width(100));
         EditorGUI.BeginChangeCheck();
