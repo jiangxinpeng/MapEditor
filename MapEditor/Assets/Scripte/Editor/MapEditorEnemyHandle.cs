@@ -56,6 +56,12 @@ namespace ArrowLegend.MapEditor
         public int EnemyOldSmallType;       //切换之前旧的小类型
         public int EnemyOldIndex;          //切换编号之前旧的编号
 
+        public bool IsPatrol;     //是否在点之间巡逻
+        public int PointOldIndex;   //怪物巡逻点的旧编号
+        public int PointIndex;    //怪物巡逻点编号
+        public List<string> PointList = new List<string>();
+        public Vector3 PointPos;   //巡逻点的坐标
+
         public void Init()
         {
             if (MapGeneratorEditor.levelInfo.enemyTimesInfo != null)
@@ -201,7 +207,7 @@ namespace ArrowLegend.MapEditor
         /// </summary>
         private void InitBigTypeGameObject()
         {
-            if (GameObject.Find("Level_" + GetLevelID()+"Time_" + (EnemyTime + 1)))
+            if (GameObject.Find("Level_" + GetLevelID()+"/Time_" + (EnemyTime + 1)))
             {
                 return;
             }
@@ -241,6 +247,8 @@ namespace ArrowLegend.MapEditor
                         EnemyBigType = i;
                         ChangeToolBar();
                         InstantiateEnemy(i, j, m, infoList[m]);
+
+                        InitPointObject(j,m, infoList[m]);
                     }
                 }
             }
@@ -249,6 +257,7 @@ namespace ArrowLegend.MapEditor
             ChangeToolBar();
 
             JudgeEntityInfo(GetCurrentEnemyInfo(true), 0, ref enemyPos, ref enemyRot, ref enemyScal);
+            InitPointPos(0);
         }
 
         /// <summary>
@@ -264,7 +273,7 @@ namespace ArrowLegend.MapEditor
             InstantiateEnemy(EnemyBigType, EnemySmallType, infoList.Count-1, infoList[infoList.Count - 1]);
 
             JudgeEntityInfo(infoList, EnemyIndex, ref enemyPos, ref enemyRot, ref enemyScal);
-
+            InitPointPos(0);
         }
         /// <summary>
         /// 添加怪物   笔刷加怪物
@@ -283,6 +292,7 @@ namespace ArrowLegend.MapEditor
             EnemyIndex = infoList.Count - 1;
 
             JudgeEntityInfo(infoList, EnemyIndex, ref enemyPos, ref enemyRot, ref enemyScal);
+            InitPointPos(0);
         }
 
         /// <summary>
@@ -399,6 +409,155 @@ namespace ArrowLegend.MapEditor
                 AddEntityList(EnemyList, EnemySmallList[EnemySmallType], i);
             }
             JudgeEntityInfo( infoList, 0, ref enemyPos, ref enemyRot, ref enemyScal);
+
+        }
+
+        /// <summary>
+        /// 初始化巡逻点
+        /// </summary>
+        public void InitPointPos(int index)
+        {
+            PointIndex = index;
+            PointList.Clear();
+
+            List<TransformInfo> newEnemy = GetCurrentEnemyInfo(true);
+            if (newEnemy.Count <= 0)
+            {
+               // MapGeneratorEditor.Tip("请先创建相应的怪物");
+                return;
+            }
+            int count = newEnemy[EnemyIndex].patrolList.Count;
+            if (count==0)
+            {
+                PointPos = Vector3.zero;
+                return;
+            }
+            double[] d = newEnemy[EnemyIndex].patrolList[PointIndex];
+            PointPos = new Vector3((float)d[0], (float)d[1], (float)d[2]);
+            for (int i=1;i<= count; i++)
+            {
+                PointList.Add("巡逻点" + i + "号");
+            }
+        }
+
+        /// <summary>
+        /// 初始化巡逻点的建筑
+        /// </summary>
+        public void InitPointObject(int small,int index,TransformInfo info)
+        {
+            GameObject asset = Resources.Load("point") as GameObject;
+            for (int i=0;i<info.patrolList.Count;i++)
+            {
+                Vector3 pos = new Vector3((float)info.patrolList[i][0], (float)info.patrolList[i][1], (float)info.patrolList[i][2]);
+                GameObject point = GameObject.Instantiate(asset, pos, Quaternion.identity);
+                point.name = $"{EnemySmallList[small]}编号{index} 巡逻点{ i+1}号";
+                point.transform.SetParent(GameObject.Find("Map/Point").transform);
+            }
+        }
+
+        /// <summary>
+        /// 设置巡逻点笔刷模板
+        /// </summary>
+        public void SetPointtTemplate()
+        {
+            GameObject asset = Resources.Load("point") as GameObject;
+            SetTemplate(asset, new ProductTemplateCallBack(AddPointPos));
+        }
+
+        /// <summary>
+        ///添加巡逻点
+        /// </summary>
+        public void AddPointPos()
+        {
+            List<TransformInfo> newEnemy = GetCurrentEnemyInfo(true);
+            if (newEnemy.Count <= 0)
+            {
+                MapGeneratorEditor.Tip("请先创建相应的怪物");
+                return;
+            }
+            newEnemy[EnemyIndex].patrolList.Add(new double[] { 0,0,0});
+            PointList.Add("巡逻点" + newEnemy[EnemyIndex].patrolList.Count+"号");
+            PointIndex = newEnemy[EnemyIndex].patrolList.Count - 1;
+
+            PointPos = Vector3.zero;
+        }
+
+        /// <summary>
+        /// 笔刷添加巡逻位置
+        /// </summary>
+        public void AddPointPos(Vector3 pos)
+        {
+            SavePointPos(PointIndex);
+
+            PointPos = pos;
+
+            List<TransformInfo> newEnemy = GetCurrentEnemyInfo(true);
+            if (newEnemy.Count <= 0)
+            {
+                MapGeneratorEditor.Tip("请先创建相应的怪物");
+                return;
+            }
+            newEnemy[EnemyIndex].patrolList.Add(new double[] { pos.x, pos.y, pos.z });
+            PointList.Add("巡逻点" + newEnemy[EnemyIndex].patrolList.Count + "号");
+            PointIndex = newEnemy[EnemyIndex].patrolList.Count - 1;
+
+            GameObject asset = Resources.Load("point") as GameObject;
+            GameObject point = GameObject.Instantiate(asset, pos, Quaternion.identity);
+            point.name = $"{EnemyList[EnemyIndex]} 巡逻点{ newEnemy[EnemyIndex].patrolList.Count}号";
+            point.transform.SetParent(GameObject.Find("Map/Point").transform);
+        }
+
+        /// <summary>
+        /// 保存巡逻点  index是巡逻点编号
+        /// </summary>
+        public void SavePointPos(int index)
+        {
+            List<TransformInfo> newEnemy = GetCurrentEnemyInfo(true);
+            if (newEnemy.Count <= 0)
+            {
+                MapGeneratorEditor.Tip("请先创建相应的怪物");
+                return;
+            }
+            int count = newEnemy[EnemyIndex].patrolList.Count;
+            if (count == 0)
+            {
+                return;
+            }
+            if (count > index)
+            {
+                newEnemy[EnemyIndex].patrolList[index] = new double[] { Math.Round(PointPos[0], 2), Math.Round(PointPos[1], 2), Math.Round(PointPos[2], 2) };
+            }
+        }
+
+        
+        /// <summary>
+        /// 删除巡逻点
+        /// </summary>
+        public void DeletePoint()
+        {
+            if (PointList.Count==0)
+            {
+                return;
+            }
+
+            PointList.RemoveAt(PointIndex);
+
+            List<TransformInfo> newEnemy = GetCurrentEnemyInfo(true);
+            if (newEnemy.Count <= 0)
+            {
+                MapGeneratorEditor.Tip("请先创建相应的怪物");
+                return;
+            }
+            GameObject.DestroyImmediate(GameObject.Find($"{EnemyList[EnemyIndex]} 巡逻点{ newEnemy[EnemyIndex].patrolList.Count}号"));
+            newEnemy[EnemyIndex].patrolList.RemoveAt(PointIndex);
+            PointIndex = newEnemy[EnemyIndex].patrolList.Count - 1;
+            if (PointIndex<0)
+            {
+                PointPos = new Vector3(0,0,0);
+                return;
+            }
+            double[] d = newEnemy[EnemyIndex].patrolList[PointIndex];
+            PointPos = new Vector3((float)d[0], (float)d[1], (float)d[2]);
         }
 
         /// <summary>
@@ -436,8 +595,10 @@ namespace ArrowLegend.MapEditor
             //以上的操作是切换之前旧的建筑  以下是新的建筑显示
             
             //获得的新的建筑的信息是空的话  位置是默认的
-            List<TransformInfo> newBuild = GetCurrentEnemyInfo(true);
-            JudgeEntityInfo(newBuild,  EnemyIndex, ref enemyPos, ref enemyRot, ref enemyScal);
+            List<TransformInfo> newEnemy = GetCurrentEnemyInfo(true);
+            JudgeEntityInfo(newEnemy,  EnemyIndex, ref enemyPos, ref enemyRot, ref enemyScal);
+
+            InitPointPos(0);
         }
 
         /// <summary>
@@ -539,6 +700,7 @@ namespace ArrowLegend.MapEditor
             if (list.Count != 0)
             {
                 JudgeEntityInfo(list, 0, ref enemyPos, ref enemyRot, ref enemyScal);
+                InitPointPos(0);
             }
 
         }

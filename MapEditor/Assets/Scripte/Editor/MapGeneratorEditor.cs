@@ -21,7 +21,7 @@ public class MapGeneratorEditor : EditorWindow
     [MenuItem("地图编辑器/编辑地图")]
     private static void Open()
     {
-        MapGeneratorEditor window = GetWindowWithRect<MapGeneratorEditor>(new Rect(0, 0, 800, 700), true, "地图编辑器", true);
+        MapGeneratorEditor window = GetWindowWithRect<MapGeneratorEditor>(new Rect(0, 0, 800, 800), true, "地图编辑器", false);
     }
 
     private void OnEnable()
@@ -48,6 +48,7 @@ public class MapGeneratorEditor : EditorWindow
 
         DestoryMapGame("Ground");
         DestoryMapGame("Enemy");
+        DestoryMapGame("Point");
 
         AssetDatabase.Refresh();
     }
@@ -244,15 +245,6 @@ public class MapGeneratorEditor : EditorWindow
         {
             sizeHandle.SetGroundMaterial();
         }
-        //GUILayout.Space(50);
-        //EditorGUI.BeginChangeCheck();
-        //{
-        //    sizeHandle.mapTextureId = EditorGUILayout.IntField("贴图编号", sizeHandle.mapTextureId, GUILayout.Width(200));
-        //}
-        //if (EditorGUI.EndChangeCheck())
-        //{
-        //    Debug.Log("换了贴图编号，改变对应的texture" + sizeHandle.mapTextureId);
-        //}
         EditorGUILayout.EndHorizontal();
     }
 
@@ -427,6 +419,8 @@ public class MapGeneratorEditor : EditorWindow
         enemyHandle.enemyPos = EditorGUILayout.Vector3Field("位置", enemyHandle.enemyPos, GUILayout.Width(300));
         enemyHandle.enemyRot = EditorGUILayout.Vector3Field("旋转", enemyHandle.enemyRot, GUILayout.Width(300));
         enemyHandle.enemyScal = EditorGUILayout.Vector3Field("缩放", enemyHandle.enemyScal, GUILayout.Width(300));
+
+        EnemyPatrol();
     }
 
     /// <summary>
@@ -471,6 +465,37 @@ public class MapGeneratorEditor : EditorWindow
         //Debug.LogError("位置信息" + JsonMapper.ToJson(posInfo) + "编号" + handle.enemyIndex);
         //PosInfo(posInfo[handle.enemyIndex]);
 
+    }
+
+    /// <summary>
+    /// 怪物巡逻点配置
+    /// </summary>
+    private void EnemyPatrol()
+    {
+        enemyHandle.IsPatrol = EditorGUILayout.ToggleLeft("是否巡逻", enemyHandle.IsPatrol, GUILayout.Width(200));
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("巡逻点编号", GUILayout.Width(100));
+        EditorGUI.BeginChangeCheck();
+        {
+            enemyHandle.PointOldIndex = enemyHandle.PointIndex;
+            enemyHandle.PointIndex = EditorGUILayout.Popup(enemyHandle.PointIndex, enemyHandle.PointList.ToArray(), GUILayout.Width(150));
+        }
+        if (EditorGUI.EndChangeCheck())
+        {
+            enemyHandle.SavePointPos(enemyHandle.PointOldIndex);
+            enemyHandle.InitPointPos(enemyHandle.PointIndex);
+        }
+        if (GUILayout.Button("设为笔刷", GUILayout.Width(150)))
+        {
+            enemyHandle.SetPointtTemplate();
+        }
+        if (GUILayout.Button("删除该巡逻点", GUILayout.Width(150)))
+        {
+           enemyHandle.DeletePoint();
+        }
+        EditorGUILayout.EndHorizontal();
+
+        enemyHandle.PointPos = EditorGUILayout.Vector3Field("巡逻点位置", enemyHandle.PointPos, GUILayout.Width(300));
     }
 
     /// <summary>
