@@ -15,6 +15,7 @@ public class MapGeneratorEditor : EditorWindow
     private MapEditorLevelHandle levelHandle;
     private MapEditorSizeAndTextureHandle sizeHandle;
     private MapEditorBuildHandle buildHandle;
+    private MapEditorEscort escortHandle;
     private MapEditorEnemyHandle enemyHandle;
     private MapEditorWeatherHandle weatherHandle;
 
@@ -30,6 +31,7 @@ public class MapGeneratorEditor : EditorWindow
         sizeHandle = new MapEditorSizeAndTextureHandle();
         buildHandle = new MapEditorBuildHandle();
         enemyHandle = new MapEditorEnemyHandle();
+        escortHandle = new MapEditorEscort();
         weatherHandle = new MapEditorWeatherHandle();
 
         InitData();
@@ -71,6 +73,7 @@ public class MapGeneratorEditor : EditorWindow
         buildHandle.ShowSelectionInfo(Selection.activeGameObject);
         enemyHandle.ShowSelectionInfo(Selection.activeGameObject);
         enemyHandle.ShowSelectPoint(Selection.activeGameObject);
+        escortHandle.ShowSelectPoint(Selection.activeGameObject);
     }
 
     //初始化数据
@@ -80,6 +83,7 @@ public class MapGeneratorEditor : EditorWindow
         levelHandle.Init();
         sizeHandle.Init();
         buildHandle.Init();
+        escortHandle.Init();
         enemyHandle.Init();
         weatherHandle.Init();
     }
@@ -92,6 +96,7 @@ public class MapGeneratorEditor : EditorWindow
         weatherHandle.ChangeLevel(level + 1);
         sizeHandle.ChangeLevel(level + 1);
         buildHandle.ChangeLevel(level + 1);
+        escortHandle.ChangeLevel(level+1);
         enemyHandle.ChangeLevel(level + 1);
 
         levelHandle.ChangeLevel(level + 1);  //在此之后levelInfo刷新了 新的关卡的信息
@@ -105,6 +110,7 @@ public class MapGeneratorEditor : EditorWindow
     {
         sizeHandle.AfterChangeLevel();
         buildHandle.AfterChangeLevel();
+        escortHandle.AfterChangeLevel();
         enemyHandle.AfterChangeLevel();
         weatherHandle.AfterChangeLevel();
     }
@@ -118,6 +124,7 @@ public class MapGeneratorEditor : EditorWindow
 
         sizeHandle.CreateNewLevel();
         buildHandle.CreateNewLevel();
+        escortHandle.CreateNewLevel();
         enemyHandle.CreateNewLevel();
         weatherHandle.CreateNewLevel();
     }
@@ -129,6 +136,8 @@ public class MapGeneratorEditor : EditorWindow
         MapGroundConfigure();
         EditorGUILayout.Space();
         BuildConfigure();
+        GUILayout.Space(20);
+        PathConfigure();
         GUILayout.Space(20);
         EnemyConfigure();
         GUILayout.Space(20);
@@ -146,6 +155,7 @@ public class MapGeneratorEditor : EditorWindow
         buildHandle.RepaintCurrentBuild();
         enemyHandle.RepaintCurrentEnemy();
         enemyHandle.RepaintCurrentPoint();
+        escortHandle.RepaintCurrentPoint();
         Repaint();
     }
 
@@ -322,6 +332,36 @@ public class MapGeneratorEditor : EditorWindow
         buildHandle.BuildRot = EditorGUILayout.Vector3Field("旋转", buildHandle.BuildRot, GUILayout.Width(300));
         buildHandle.BuildScal = EditorGUILayout.Vector3Field("缩放", buildHandle.BuildScal, GUILayout.Width(300));
 
+    }
+
+    /// <summary>
+    /// 路线配置
+    /// </summary>
+    private void PathConfigure()
+    {
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("护送目标路径编号", GUILayout.Width(100));
+        EditorGUI.BeginChangeCheck();
+        {
+            escortHandle.PointOldIndex = escortHandle.PointIndex;
+            escortHandle.PointIndex = EditorGUILayout.Popup(escortHandle.PointIndex, escortHandle.PointList.ToArray(), GUILayout.Width(150));
+        }
+        if (EditorGUI.EndChangeCheck())
+        {
+            escortHandle.SavePointPos(escortHandle.PointOldIndex);
+            escortHandle.InitPointPos(escortHandle.PointIndex);
+        }
+        if (GUILayout.Button("设为笔刷", GUILayout.Width(150)))
+        {
+            escortHandle.SetPointtTemplate();
+        }
+        if (GUILayout.Button("删除该路径点", GUILayout.Width(150)))
+        {
+            escortHandle.DeletePoint();
+        }
+        EditorGUILayout.EndHorizontal();
+
+        escortHandle.PointPos = EditorGUILayout.Vector3Field("路径点位置", escortHandle.PointPos, GUILayout.Width(300));
     }
 
     //private void OnSelectionChange()

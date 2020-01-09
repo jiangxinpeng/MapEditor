@@ -115,7 +115,6 @@ namespace ArrowLegend.MapEditor
             CreateLevelParent();
             InitBigTypeGameObject();
             InitEnemy(EnemyTime);
-
         }
 
         public void CreateNewLevel()

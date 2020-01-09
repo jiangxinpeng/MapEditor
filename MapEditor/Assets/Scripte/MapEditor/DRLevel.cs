@@ -22,5 +22,7 @@ namespace ArrowLegend.MapEditor
 
         public LevelCorrespondWeather weatherInfo;     //关卡对应的天气信息
 
+        public List<double[]> escortList = new List<double[]>();   //护送目标的路径，如果存在护送目标的话
+
     }
 }

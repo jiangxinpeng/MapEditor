@@ -12,6 +12,6 @@ namespace ArrowLegend.MapEditor
     {
         public int sumTimes;   //总波数
 
-        public List<TimesCorrespondEnemy> timesEnemyList=new List<TimesCorrespondEnemy>();
+        public List<TimesCorrespondEnemy> timesEnemyList = new List<TimesCorrespondEnemy>();
     }
 }
