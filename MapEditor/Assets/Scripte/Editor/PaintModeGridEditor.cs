@@ -74,7 +74,7 @@ public class PaintModeGridEditor :Editor
     {
         if (template==null)
         {
-            MapGeneratorEditor.Tip("请设置笔刷！！");
+            //MapGeneratorEditor.Tip("请设置笔刷！！");
             return;
         }
         ProductTemplateCallBack(cursorPosition);
