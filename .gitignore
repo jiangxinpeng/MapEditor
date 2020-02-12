@@ -1,6 +1,6 @@
 ##ignore these file##
-.csproj
-.sln
-Library/
-obj/
-Temp/
+*.csproj
+*.sln
+/Library/
+/obj/
+/Temp/
