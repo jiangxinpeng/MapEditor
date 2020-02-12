@@ -83,7 +83,7 @@ namespace ArrowLegend.MapEditor
         private void BindBuildInfo()
         {
             levelCorrespondBuildInfo = MapGeneratorEditor.levelInfo.BuildInfo;
-            if (levelCorrespondBuildInfo == null)
+            if (levelCorrespondBuildInfo == null)  //没有任何关卡的信息
             {
                 levelCorrespondBuildInfo = new LevelCorrespondBuildInfo();
                 for (int i = 0; i < ToolbarStrings.Length; i++)
@@ -98,10 +98,8 @@ namespace ArrowLegend.MapEditor
 
                         smallTypeEntityInfos.Add(smallTypeEntityInfo);
                     }
-
                     levelCorrespondBuildInfo.BigTypeInfoList.Add(bigTypeEntityInfo);
                 }
-
                 MapGeneratorEditor.levelInfo.BuildInfo = levelCorrespondBuildInfo;
             }
         }
@@ -158,12 +156,11 @@ namespace ArrowLegend.MapEditor
 
                 for (int j = 0; j < smallTypeEntityInfos.Count; j++)
                 {
-
                     //smallTypeEntityInfos[j].Id = 100 * (i + 1) + (j + 1);
-
                     List<TransformInfo> infoList = smallTypeEntityInfos[j].infoList;   //拿到单个小类型的所有物体列表
                     for (int m = 0; m < infoList.Count; m++)
                     {
+
                         BuildBigType = i;
                         ChangeToolBar();
                         InstantiateBuild(i, j, m, infoList[m]);

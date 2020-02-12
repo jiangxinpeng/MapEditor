@@ -9,9 +9,8 @@ using UnityEditor.Presets;
 
 public class MapGeneratorEditor : EditorWindow
 {
-    public static DRLevel levelInfo;
-
-    private MapEditorData data;
+    public static DRLevel levelInfo;    //静态的变量抛给外部公用
+    //private MapEditorData data;
     private MapEditorLevelHandle levelHandle;
     private MapEditorSizeAndTextureHandle sizeHandle;
     private MapEditorBuildHandle buildHandle;
@@ -80,7 +79,8 @@ public class MapGeneratorEditor : EditorWindow
     private void InitData()
     {
         //data.InitData();
-        levelHandle.Init();
+        levelHandle.Init();  //这个初始化一定是排第一位的
+
         sizeHandle.Init();
         buildHandle.Init();
         escortHandle.Init();

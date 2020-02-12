@@ -418,11 +418,14 @@ namespace ArrowLegend.MapEditor
         {
             if (go?.transform?.parent?.parent?.parent?.parent?.parent?.name == "Enemy")
             {
-                ShowSelectionInfo(go.transform.parent.gameObject);
-                point = go;
-                string[] str = point.name.Split('_');
-                PointIndex =Convert.ToInt32(str[1])-1;
-                InitPointPos(PointIndex);
+                if (go.name.StartsWith("巡逻点"))
+                {
+                    ShowSelectionInfo(go.transform.parent.gameObject);
+                    point = go;
+                    string[] str = point.name.Split('_');
+                    PointIndex = Convert.ToInt32(str[1]) - 1;
+                    InitPointPos(PointIndex);
+                }
             }
         }
 
