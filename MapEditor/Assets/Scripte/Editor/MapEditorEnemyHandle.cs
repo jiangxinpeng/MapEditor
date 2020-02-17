@@ -50,7 +50,7 @@ namespace ArrowLegend.MapEditor
             EnemyBigType = 0;
             EnemySmallType = 0;
 
-            BindBuildInfo();
+            BindEnemyInfo();
             InitEnemy();
         }
 
@@ -62,7 +62,7 @@ namespace ArrowLegend.MapEditor
         /// <summary>
         /// 把enemyInfo绑定给LevelInfo
         /// </summary>
-        private void BindBuildInfo()
+        private void BindEnemyInfo()
         {
             //List<string[]> valus = new List<string[]>(GlobalHandle.EnemyBigTypeNameList.Values);
             levelCorrespondEnemyInfo = GlobalHandle.levelInfo.enemyTimesInfo;
@@ -73,8 +73,15 @@ namespace ArrowLegend.MapEditor
             }
             InitTimeList();
 
+            BindEnemyTimeInfo();
+
+        }
+
+        private void BindEnemyTimeInfo()
+        {
             for (int m = 0; m < levelCorrespondEnemyInfo.timesEnemyList.Count; m++)
             {
+                levelCorrespondEnemyInfo.timesEnemyList[m].times = m + 1;
                 if (levelCorrespondEnemyInfo.timesEnemyList[m].BigTypeInfoList.Count == 0)
                 {
                     for (int i = 0; i < EnemyBigList.Length; i++)
@@ -93,7 +100,6 @@ namespace ArrowLegend.MapEditor
                     }
                 }
             }
-
         }
 
         private void InitTimeList()
@@ -113,8 +119,10 @@ namespace ArrowLegend.MapEditor
         public void CreateNewTime()
         {
             levelCorrespondEnemyInfo.timesEnemyList.Add(new TimesCorrespondEnemy());
-            TimesList.Add($"第{TimesList.Count}波怪物");
-            EnemyTime = TimesList.Count;
+            BindEnemyTimeInfo();
+
+            TimesList.Add($"第{TimesList.Count+1}波怪物");
+            EnemyTime = TimesList.Count-1;
 
             CreateTimes(EnemyTime);
             EnemyBigType = 0;
@@ -203,7 +211,7 @@ namespace ArrowLegend.MapEditor
         }
 
         /// <summary>
-        /// 实例化建筑出来
+        /// 实例化怪物出来
         /// </summary>
         /// <param name="j">小类型</param>
         /// <param name="m">编号</param>
@@ -219,8 +227,6 @@ namespace ArrowLegend.MapEditor
             string fatherName = $"Level_{GlobalHandle.levelInfo.levelId}/Enemy/第{t + 1}波怪物/{keys[i]}/{valus[i][j]}";
 
             InstantiateEntity(assetName, fatherName, buildName, m, info);
-            InitPointObject(t,i,j,m,info);
-            //AddEntityList(EnemyList, EnemySmallList[j], m);
         }
 
         /// <summary>
@@ -274,6 +280,8 @@ namespace ArrowLegend.MapEditor
             int timesCount = enemy.childCount;
             for (int t = 0; t < timesCount; t++)
             {
+                //levelCorrespondEnemyInfo.timesEnemyList[t].times = t + 1;   在初始化的时候赋值了
+
                 Transform times = enemy.GetChild(t);
                 int bigCount = enemy.GetChild(t).childCount;
                 for (int i = 0; i < bigCount; i++)
@@ -340,11 +348,17 @@ namespace ArrowLegend.MapEditor
 
         private void AddBuild(Vector3 vector3)
         {
+            if (GameObject.Find("Map").transform.childCount == 0)
+            {
+                return;
+            }
+
             Transform parent = GameObject.Find($"Level_{GlobalHandle.levelInfo.levelId}/Enemy/第{(EnemyTime + 1)}波怪物/{keys[EnemyBigType]}/{valus[EnemyBigType][EnemySmallType]}").transform;
             int count = parent.childCount;
             TransformInfo transformInfo = new TransformInfo();
             transformInfo.pos = new double[] { Math.Round(vector3.x, 2), Math.Round(vector3.y, 2), Math.Round(vector3.z, 2) };
             InstantiateEnemy(EnemyTime, EnemyBigType, EnemySmallType, count, transformInfo);
+            InitPointObject(EnemyTime, EnemyBigType, EnemySmallType, count, transformInfo);
         }
     }
 }

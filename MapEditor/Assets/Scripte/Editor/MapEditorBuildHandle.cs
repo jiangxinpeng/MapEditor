@@ -34,7 +34,6 @@ namespace ArrowLegend.MapEditor
 
         public void Init()
         {
-            
             BuildBigType = 0;
             BuildSmallType = 0;
             BindBuildInfo();
@@ -63,21 +62,22 @@ namespace ArrowLegend.MapEditor
         {
            //List<string[]> valus = new List<string[]>(GlobalHandle.BuildBigTypeNameList.Values);
             levelCorrespondBuildInfo = GlobalHandle.levelInfo.BuildInfo;
-
-            for (int i = 0; i < BuildBigList.Length; i++)
+            if (levelCorrespondBuildInfo.BigTypeInfoList.Count==0)
             {
-                BigTypeEntityInfo bigTypeEntityInfo = new BigTypeEntityInfo();
-                List<SmallTypeEntityInfo> smallTypeEntityInfos = new List<SmallTypeEntityInfo>();
-                bigTypeEntityInfo.SmallTypeInfoList = smallTypeEntityInfos;
-
-
-                for (int j = 0; j < valus[i].Length; j++)
+                for (int i = 0; i < BuildBigList.Length; i++)
                 {
-                    SmallTypeEntityInfo smallTypeEntityInfo = new SmallTypeEntityInfo();
-                    smallTypeEntityInfo.Id = 100 * (i + 1) + (j + 1);
-                    smallTypeEntityInfos.Add(smallTypeEntityInfo);
+                    BigTypeEntityInfo bigTypeEntityInfo = new BigTypeEntityInfo();
+                    List<SmallTypeEntityInfo> smallTypeEntityInfos = new List<SmallTypeEntityInfo>();
+                    bigTypeEntityInfo.SmallTypeInfoList = smallTypeEntityInfos;
+
+                    for (int j = 0; j < valus[i].Length; j++)
+                    {
+                        SmallTypeEntityInfo smallTypeEntityInfo = new SmallTypeEntityInfo();
+                        smallTypeEntityInfo.Id = 100 * (i + 1) + (j + 1);
+                        smallTypeEntityInfos.Add(smallTypeEntityInfo);
+                    }
+                    levelCorrespondBuildInfo.BigTypeInfoList.Add(bigTypeEntityInfo);
                 }
-                levelCorrespondBuildInfo.BigTypeInfoList.Add(bigTypeEntityInfo);
             }
         }
 
@@ -209,6 +209,10 @@ namespace ArrowLegend.MapEditor
 
         private void AddBuild(Vector3 vector3)
         {
+            if (GameObject.Find("Map").transform.childCount==0)
+            {
+                return;
+            }
             Transform parent = GameObject.Find($"Level_{GlobalHandle.levelInfo.levelId}/Build/{keys[BuildBigType]}/{valus[BuildBigType][BuildSmallType]}").transform;
             int count = parent.childCount;
             //List<TransformInfo> transformInfo = GetCurrentBuildInfo();
