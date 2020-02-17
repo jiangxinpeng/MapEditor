@@ -441,7 +441,7 @@ GameObject:
   - component: {fileID: 4861363022170800}
   - component: {fileID: 95045834799801478}
   m_Layer: 0
-  m_Name: bigDog
+  m_Name: "\u5DE8\u578B\u91CE\u72D7"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

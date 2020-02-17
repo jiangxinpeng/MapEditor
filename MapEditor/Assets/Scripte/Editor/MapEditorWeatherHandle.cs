@@ -49,11 +49,11 @@ namespace ArrowLegend.MapEditor
         //绑定天气信息
         private void BindWeatherInfo()
         {
-            levelCorrespondWeather = MapGeneratorEditor.levelInfo.weatherInfo;
+            levelCorrespondWeather = GlobalHandle.levelInfo.weatherInfo;
             if (levelCorrespondWeather==null)
             {
                 levelCorrespondWeather = new LevelCorrespondWeather();
-                MapGeneratorEditor.levelInfo.weatherInfo = levelCorrespondWeather;
+                GlobalHandle.levelInfo.weatherInfo = levelCorrespondWeather;
             }
         }
 

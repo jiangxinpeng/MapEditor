@@ -16,9 +16,9 @@ namespace ArrowLegend.MapEditor
 
         public string groundMaterial;    //地图纹理ID
 
-        public LevelCorrespondBuildInfo BuildInfo;  //关卡对应的建筑信息
+        public LevelCorrespondBuildInfo BuildInfo=new LevelCorrespondBuildInfo();  //关卡对应的建筑信息
 
-        public LevelCorrespondEnemy enemyTimesInfo;   //关卡对应的怪物的信息
+        public LevelCorrespondEnemy enemyTimesInfo = new LevelCorrespondEnemy();   //关卡对应的怪物的信息
 
         public LevelCorrespondWeather weatherInfo;     //关卡对应的天气信息
 

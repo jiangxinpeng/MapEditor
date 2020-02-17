@@ -17,10 +17,11 @@ namespace ArrowLegend.MapEditor
         /// <returns></returns>
         public bool IsExitLevel()
         {
-            if (MapGeneratorEditor.levelInfo.levelId == 0)
+            if (GlobalHandle.levelInfo.levelId == 0)
             {
                 return false;
             }
+
             else
             {
                 return true;
@@ -34,7 +35,7 @@ namespace ArrowLegend.MapEditor
         {
             if (GameObject.Find(fatherName) == null)
             {
-                MapGeneratorEditor.Tip("先创建关卡和地图！！！！");
+                GlobalHandle.Tip("先创建关卡和地图！！！！");
                 return;
             }
 
@@ -51,12 +52,11 @@ namespace ArrowLegend.MapEditor
             go.transform.localEulerAngles = new Vector3((float)info.rot[0], (float)info.rot[1], (float)info.rot[2]);
             if (info.scal[0]==0)  //大小没有赋值就是用初始的值
             {
-                info.scal[0] = go.transform.localScale.x;
-                info.scal[1] = go.transform.localScale.y;
-                info.scal[2] = go.transform.localScale.z;
+                info.scal[0] =Math.Round(go.transform.localScale.x,2);
+                info.scal[1] = Math.Round(go.transform.localScale.y,2);
+                info.scal[2] = Math.Round(go.transform.localScale.z,2);
             }
-
-            //currentGameObject = go;
+            go.transform.localScale = new Vector3((float)info.scal[0], (float)info.scal[1], (float)info.scal[2]);
         }
 
         /// <summary>

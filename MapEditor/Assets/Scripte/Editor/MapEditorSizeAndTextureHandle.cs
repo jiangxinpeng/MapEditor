@@ -22,12 +22,15 @@ namespace ArrowLegend.MapEditor
 
         public void Init()
         {
-            MapSize = new Vector2Int(MapGeneratorEditor.levelInfo.mapSize[0], MapGeneratorEditor.levelInfo.mapSize[1]);
-            groundMaterialName = string.IsNullOrEmpty(MapGeneratorEditor.levelInfo.groundMaterial) ? "defalutMaterial" : MapGeneratorEditor.levelInfo.groundMaterial;
+            MapSize = new Vector2Int(GlobalHandle.levelInfo.mapSize[0], GlobalHandle.levelInfo.mapSize[1]);
+            DefaultMapSize();
+
+            groundMaterialName = string.IsNullOrEmpty(GlobalHandle.levelInfo.groundMaterial) ? "defalutMaterial" : GlobalHandle.levelInfo.groundMaterial;
             GroundMaterial = Resources.Load($"{mapTexturePath}/{groundMaterialName}") as Material;
 
+            Debug.Log("地图的关卡：" + GlobalHandle.levelInfo.levelId);
             //配置存在的时候
-            if (MapGeneratorEditor.levelInfo.levelId != 0)
+            if (GlobalHandle.levelInfo.levelId != 0)
             {
                 ProductGround();
             }
@@ -36,6 +39,14 @@ namespace ArrowLegend.MapEditor
         public void Destory()
         {
             SaveInfo();
+            //Debug.Log("删除了第一关 创建新的第二关"+ GlobalHandle.levelInfo.levelId);
+            Object.DestroyImmediate(GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId));
+        }
+
+        private void DefaultMapSize()
+        {
+            MapSize.x = MapSize.x == 0 ? 25 : MapSize.x;
+            MapSize.y = MapSize.y == 0 ? 10 : MapSize.y;
         }
 
         /// <summary>
@@ -99,22 +110,22 @@ namespace ArrowLegend.MapEditor
         {
             if (ground == null)
             {
-                if (GameObject.Find("ground_" + MapGeneratorEditor.levelInfo.levelId) != null)
+                if (GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId) != null)
                 {
-                     GameObject.DestroyImmediate(GameObject.Find("ground_" + MapGeneratorEditor.levelInfo.levelId));
-                   // return;
+                    GameObject.DestroyImmediate(GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId));
+                    // return;
                 }
-                ground = new GameObject("ground_" + MapGeneratorEditor.levelInfo.levelId);
+                ground = new GameObject("Level_" + GlobalHandle.levelInfo.levelId);
                 Transform transform = ground.transform;
-                transform.SetParent(GameObject.Find("Ground").transform);
+                transform.SetParent(GameObject.Find("Map").transform);
                 transform.localPosition = Vector3.zero;
                 //transform.localPosition = new Vector3((MapGeneratorEditor.levelInfo.levelId-1)*33,0,0);
                 groundMeshFilter = ground.AddComponent<MeshFilter>();
                 UpdateMesh(groundMeshFilter);
                 ground.AddComponent<MeshRenderer>();
 
-                InitBigTypeGameObject();
-                InitEnemyParentGameObject();
+                //InitBigTypeGameObject();
+                //InitEnemyParentGameObject();
             }
             else
             {
@@ -131,14 +142,24 @@ namespace ArrowLegend.MapEditor
         private void InitBigTypeGameObject()
         {
             GameObject build = new GameObject("Build");
-            build.transform.SetParent(GameObject.Find("ground_" + MapGeneratorEditor.levelInfo.levelId).transform);
+            build.transform.SetParent(GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId).transform);
             build.transform.localPosition = Vector3.zero;
 
-            int count = MapEditorBuildHandle.BuildBigTypeFolderNameList.Length;
+            int count = GlobalHandle.BuildBigTypeNameList.Count;
+            List<string> keys = new List<string>(GlobalHandle.BuildBigTypeNameList.Keys);
+
             for (int i = 0; i < count; i++)
             {
-                GameObject go = new GameObject(MapEditorBuildHandle.BuildBigTypeFolderNameList[i]);
-                go.transform.SetParent(GameObject.Find("ground_" + MapGeneratorEditor.levelInfo.levelId + "/Build").transform);
+                //挂载大类型
+                GameObject big = new GameObject(keys[i]);
+                big.transform.SetParent(GameObject.Find($"Level_{GlobalHandle.levelInfo.levelId}/Build").transform);
+                //挂载小类型
+                List<string[]> valus = new List<string[]>(GlobalHandle.BuildBigTypeNameList.Values);
+                for (int j = 0; j < valus[i].Length; j++)
+                {
+                    GameObject small = new GameObject(valus[i][j]);
+                    small.transform.SetParent(GameObject.Find($"Level_{GlobalHandle.levelInfo.levelId}/Build/{big.name}").transform);
+                }
             }
         }
 
@@ -148,8 +169,9 @@ namespace ArrowLegend.MapEditor
         private void InitEnemyParentGameObject()
         {
             GameObject build = new GameObject("Enemy");
-            build.transform.SetParent(GameObject.Find("ground_" + MapGeneratorEditor.levelInfo.levelId).transform);
+            build.transform.SetParent(GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId).transform);
             build.transform.localPosition = Vector3.zero;
+            //int timeCount = 
         }
 
 
@@ -254,7 +276,7 @@ namespace ArrowLegend.MapEditor
                 ground.GetComponent<MeshRenderer>().material = GroundMaterial;
             }
 
-            MapGeneratorEditor.levelInfo.groundMaterial = GroundMaterial.name;
+            GlobalHandle.levelInfo.groundMaterial = GroundMaterial.name;
         }
 
         /// <summary>
@@ -262,8 +284,8 @@ namespace ArrowLegend.MapEditor
         /// </summary>
         private void SetMapSize()
         {
-            MapGeneratorEditor.levelInfo.mapSize[0] = MapSize.x == 0 ? 25 : MapSize.x;
-            MapGeneratorEditor.levelInfo.mapSize[1] = MapSize.y == 0 ? 10 : MapSize.y;
+            GlobalHandle.levelInfo.mapSize[0] = MapSize.x == 0 ? 25 : MapSize.x;
+            GlobalHandle.levelInfo.mapSize[1] = MapSize.y == 0 ? 10 : MapSize.y;
         }
 
         /// <summary>
