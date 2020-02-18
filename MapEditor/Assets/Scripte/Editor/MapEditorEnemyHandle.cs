@@ -248,7 +248,8 @@ namespace ArrowLegend.MapEditor
                 GameObject point = GameObject.Instantiate(asset);
                 point.name = $"巡逻点_{i + 1}";
                 point.transform.SetParent(parent.transform);
-                point.transform.localPosition = pos;
+                //point.transform.localPosition =parent.transform.TransformPoint(pos);
+                point.transform.position = pos;
             }
         }
 
@@ -322,7 +323,8 @@ namespace ArrowLegend.MapEditor
                                 {
                                     info.patrolList.Add(new double[3]);
                                 }
-                                info.patrolList[p] = new double[] { Math.Round(patrolInstance.localPosition.x, 2), Math.Round(patrolInstance.localPosition.y, 2), Math.Round(patrolInstance.localPosition.z, 2) };
+                                //Vector3 worldPos = patrol.InverseTransformPoint(patrolInstance.localPosition);
+                                info.patrolList[p] = new double[] { Math.Round(patrolInstance.position.x, 2), Math.Round(patrolInstance.position.y, 2), Math.Round(patrolInstance.position.z, 2) };
                             }
                         }
                     }
