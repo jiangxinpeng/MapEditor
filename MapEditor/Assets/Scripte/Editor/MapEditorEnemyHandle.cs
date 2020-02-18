@@ -278,6 +278,10 @@ namespace ArrowLegend.MapEditor
         {
             Transform enemy = GameObject.Find($"Level_{GlobalHandle.levelInfo.levelId}/Enemy").transform;
             int timesCount = enemy.childCount;
+            if (timesCount<levelCorrespondEnemyInfo.timesEnemyList.Count)
+            {
+                levelCorrespondEnemyInfo.timesEnemyList.RemoveRange(timesCount, levelCorrespondEnemyInfo.timesEnemyList.Count-timesCount);
+            }
             for (int t = 0; t < timesCount; t++)
             {
                 //levelCorrespondEnemyInfo.timesEnemyList[t].times = t + 1;   在初始化的时候赋值了
@@ -355,7 +359,7 @@ namespace ArrowLegend.MapEditor
 
             Transform parent = GameObject.Find($"Level_{GlobalHandle.levelInfo.levelId}/Enemy/第{(EnemyTime + 1)}波怪物/{keys[EnemyBigType]}/{valus[EnemyBigType][EnemySmallType]}").transform;
             int count = parent.childCount;
-            TransformInfo transformInfo = new TransformInfo();
+            TransformInfo transformInfo = new TransformInfo(); 
             transformInfo.pos = new double[] { Math.Round(vector3.x, 2), Math.Round(vector3.y, 2), Math.Round(vector3.z, 2) };
             InstantiateEnemy(EnemyTime, EnemyBigType, EnemySmallType, count, transformInfo);
             InitPointObject(EnemyTime, EnemyBigType, EnemySmallType, count, transformInfo);
