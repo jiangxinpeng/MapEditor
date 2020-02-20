@@ -16,15 +16,17 @@ namespace ArrowLegend.MapEditor
 
         public static Dictionary<string, string[]> BuildBigTypeNameList = new Dictionary<string, string[]>();
 
-        public static string[] boundaryWallTypeArray = new string[] { "boundaryWall_1", "boundaryWall_2" };
-        public static string[] grassTypeArray = new string[] { "grass_1", "grass_2" };
-        public static string[] treeTypeArray = new string[] { "tree_1", "tree_2" };
-        public static string[] stoneTypeArray = new string[] { "stone_1", "stone_2" };
-        public static string[] stabTypeArray = new string[] { "stab_1", "stab_2" };
-        public static string[] waterTypeArray = new string[] { "water_1", "water_2" };
+        //public static string[] boundaryWallTypeArray = new string[] { "boundaryWall_1", "boundaryWall_2" };
+        public static string[] grassTypeArray = new string[] { "caoqiu" };
+        public static string[] treeTypeArray = new string[] {  "xianrenzhang01", "xianrenzhang02" };
+        public static string[] stoneTypeArray = new string[] {"shitou01", "shitou02", "shitou03", "shitou04", "shitou05" };
+        public static string[] shuganTypeArray = new string[] { "kushugan01" };
+        //public static string[] stabTypeArray = new string[] { "stab_1", "stab_2" };
+        //public static string[] waterTypeArray = new string[] { "water_1", "water_2" };
         public static string[] enterTypeArray = new string[] { "enter_1", "enter_2" };
         public static string[] outTypeArray = new string[] { "out_1", "out_2" };
         public static string[] pointTypeArray = new string[] { "carPoint"};
+        public static string[] organTypeArray = new string[] { "流沙", "捕兽夹", "地雷" };
 
         public static Dictionary<string, string[]> EnemyBigTypeNameList = new Dictionary<string, string[]>();
         public static string[] landTypeArray = new string[] { "野狗", "巨型野狗", "阿努比斯Boss" };
@@ -35,14 +37,16 @@ namespace ArrowLegend.MapEditor
 
         static GlobalHandle()
         {
-            BuildBigTypeNameList.Add("边界墙", boundaryWallTypeArray);
-            BuildBigTypeNameList.Add("草地", grassTypeArray);
-            BuildBigTypeNameList.Add("树木", treeTypeArray);
+            //BuildBigTypeNameList.Add("边界墙", boundaryWallTypeArray);
+            BuildBigTypeNameList.Add("草球", grassTypeArray);
+            BuildBigTypeNameList.Add("仙人掌", treeTypeArray);
             BuildBigTypeNameList.Add("石头", stoneTypeArray);
-            BuildBigTypeNameList.Add("路刺", stabTypeArray);
-            BuildBigTypeNameList.Add("水面", waterTypeArray);
+            BuildBigTypeNameList.Add("枯树干", shuganTypeArray);
+            //BuildBigTypeNameList.Add("路刺", stabTypeArray);
+            //BuildBigTypeNameList.Add("水面", waterTypeArray);
             BuildBigTypeNameList.Add("玩家入口", enterTypeArray);
             BuildBigTypeNameList.Add("玩家出口", outTypeArray);
+            BuildBigTypeNameList.Add("机关", organTypeArray);
             BuildBigTypeNameList.Add("押运车路径", pointTypeArray);
 
 
