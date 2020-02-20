@@ -277,6 +277,7 @@ namespace ArrowLegend.MapEditor
 
         private void Save()
         {
+
             Transform enemy = GameObject.Find($"Level_{GlobalHandle.levelInfo.levelId}/Enemy").transform;
             int timesCount = enemy.childCount;
             if (timesCount<levelCorrespondEnemyInfo.timesEnemyList.Count)
@@ -286,6 +287,7 @@ namespace ArrowLegend.MapEditor
             for (int t = 0; t < timesCount; t++)
             {
                 //levelCorrespondEnemyInfo.timesEnemyList[t].times = t + 1;   在初始化的时候赋值了
+                int timeSum=0;   //该波次的怪物总数
 
                 Transform times = enemy.GetChild(t);
                 int bigCount = enemy.GetChild(t).childCount;
@@ -298,6 +300,7 @@ namespace ArrowLegend.MapEditor
                         Transform small = big.GetChild(j);   //小类型
 
                         int instanceCount = small.childCount;
+                        timeSum += instanceCount;
                         for (int m = 0; m < instanceCount; m++)
                         {
                             Transform instance = small.GetChild(m);
@@ -329,6 +332,8 @@ namespace ArrowLegend.MapEditor
                         }
                     }
                 }
+
+                levelCorrespondEnemyInfo.timesEnemyList[t].Sum = timeSum;
             }
         }
 
