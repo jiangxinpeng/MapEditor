@@ -176,15 +176,17 @@ namespace ArrowLegend.MapEditor
                     Transform small = big.GetChild(j);   //小类型
 
                     int instanceCount = small.childCount;
+                    List<TransformInfo> infoList = levelCorrespondBuildInfo.BigTypeInfoList[i].SmallTypeInfoList[j].infoList;
+                    infoList.Clear();
+
                     for (int m = 0; m < instanceCount; m++)
                     {
                         Debug.Log($"保存建筑：大类型{i }小类型{j }实例序号{m}");
                         Transform instance = small.GetChild(m);
-                        List<TransformInfo> infoList = levelCorrespondBuildInfo.BigTypeInfoList[i].SmallTypeInfoList[j].infoList;
-                        if (m>= infoList.Count)
-                        {
+                        //if (m>= infoList.Count)
+                        //{
                             infoList.Add(new TransformInfo());
-                        }
+                       // }
                         TransformInfo info = infoList[m];
                         info.pos = new double[] { Math.Round(instance.localPosition.x, 2), Math.Round(instance.localPosition.y, 2), Math.Round(instance.localPosition.z, 2) };
                         info.rot = new double[] { Math.Round(instance.localRotation.x, 2), Math.Round(instance.localRotation.y, 2), Math.Round(instance.localRotation.z, 2) };

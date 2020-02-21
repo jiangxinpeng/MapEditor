@@ -15,3 +15,4 @@ namespace ArrowLegend.MapEditor
         public List<TimesCorrespondEnemy> timesEnemyList = new List<TimesCorrespondEnemy>();
     }
 }
+ 
