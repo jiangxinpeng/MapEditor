@@ -12,9 +12,7 @@ namespace ArrowLegend.MapEditor
     {
         public int levelId;  //关卡id
 
-        public int[] mapSize = new int[2];  //地图的大小
-
-        public string groundMaterial;    //地图纹理ID
+        public List<LevelCorrespondGround> GroundInfo = new List<LevelCorrespondGround>();
 
         public LevelCorrespondBuildInfo BuildInfo=new LevelCorrespondBuildInfo();  //关卡对应的建筑信息
 

@@ -60,7 +60,6 @@ public class MapGeneratorEditor : EditorWindow
         AssetDatabase.Refresh();
     }
 
-   
 
     //初始化数据  调用的入口在levelInfo初始化的地方
     public void InitData()
@@ -89,9 +88,9 @@ public class MapGeneratorEditor : EditorWindow
 
     }
 
-    private void OnHierarchyChange()
+    private void OnSelectionChange()
     {
-        
+        sizeHandle.SelectChange(Selection.activeGameObject);
     }
 
     /// <summary>
@@ -127,7 +126,7 @@ public class MapGeneratorEditor : EditorWindow
     {
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(5);
-        if (GUILayout.Button("产生地图", GUILayout.Width(100)))
+        if (GUILayout.Button("产生ground", GUILayout.Width(100)))
         {
             if (!IsCanClick()) return;
 
@@ -145,9 +144,13 @@ public class MapGeneratorEditor : EditorWindow
             }
         }
         sizeHandle.MapSize = EditorGUILayout.Vector2IntField("设置地图大小", sizeHandle.MapSize, GUILayout.Width(150));
+        EditorGUILayout.LabelField($"当前选择的ground:  {sizeHandle.CurrGroundName}", GUILayout.Width(200));
         EditorGUILayout.EndHorizontal();
 
-        EditorGUILayout.Space();
+        if (GUILayout.Button("修改ground大小", GUILayout.Width(100)))
+        {
+            sizeHandle.ChangeSize();
+        }
         MapTextureConfigure();
 
     }

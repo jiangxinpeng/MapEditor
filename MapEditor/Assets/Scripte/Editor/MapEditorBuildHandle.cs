@@ -36,6 +36,8 @@ namespace ArrowLegend.MapEditor
         {
             BuildBigType = 0;
             BuildSmallType = 0;
+            BuildSmallList = valus[BuildBigType];
+
             BindBuildInfo();
             InitBuild();
         }

@@ -11,29 +11,24 @@ namespace ArrowLegend.MapEditor
     /// </summary>
     class MapEditorSizeAndTextureHandle : BaseHandle, IHandle
     {
-        public Vector2Int MapSize = new Vector2Int(25, 10);  //地图尺寸
+        private List<LevelCorrespondGround> groundInfo;
+
+        public Vector2Int MapSize = new Vector2Int(1, 1);  //地图尺寸
         public string mapTexturePath = "GroundTexture";
 
-        private GameObject ground;
+        private GameObject groundParent;     //所有ground的父节点
+        private GameObject currentGround;
         private MeshFilter groundMeshFilter;
         public Material GroundMaterial;      //地图纹理
+        public string CurrGroundName = "null";        //当前ground的名字
 
         private string groundMaterialName;      //地图纹理名称
 
         public void Init()
         {
-            MapSize = new Vector2Int(GlobalHandle.levelInfo.mapSize[0], GlobalHandle.levelInfo.mapSize[1]);
-            DefaultMapSize();
-
-            groundMaterialName = string.IsNullOrEmpty(GlobalHandle.levelInfo.groundMaterial) ? "defalutMaterial" : GlobalHandle.levelInfo.groundMaterial;
-            GroundMaterial = Resources.Load($"{mapTexturePath}/{groundMaterialName}") as Material;
-
+            BindGroundInfo();
+            InitGround();
             Debug.Log("地图的关卡：" + GlobalHandle.levelInfo.levelId);
-            //配置存在的时候
-            if (GlobalHandle.levelInfo.levelId != 0)
-            {
-                ProductGround();
-            }
         }
 
         public void Destory()
@@ -43,10 +38,45 @@ namespace ArrowLegend.MapEditor
             Object.DestroyImmediate(GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId));
         }
 
+        private void BindGroundInfo()
+        {
+            groundInfo = GlobalHandle.levelInfo.GroundInfo;
+
+            if (groundInfo.Count <= 0)
+            {
+                groundInfo.Add(new LevelCorrespondGround());
+            }
+        }
+
+        private void InitGround()
+        {
+            if (GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId) == null)
+            {
+               // GameObject.DestroyImmediate(GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId));
+                GameObject level = new GameObject("Level_" + GlobalHandle.levelInfo.levelId);
+                level.transform.SetParent(GameObject.Find("Map").transform);
+                level.transform.localPosition = Vector3.zero;
+
+                groundParent = new GameObject("Ground");
+                groundParent.transform.SetParent(level.transform);
+                groundParent.transform.localPosition = Vector3.zero;
+            }
+
+            for (int i=0;i<groundInfo.Count;i++)
+            {
+                MapSize = new Vector2Int(groundInfo[i].mapSize[0], groundInfo[i].mapSize[1]);
+                DefaultMapSize();
+                groundMaterialName = string.IsNullOrEmpty(groundInfo[i].groundMaterial) ? "defalutMaterial" : groundInfo[i].groundMaterial;
+                GroundMaterial = Resources.Load($"{mapTexturePath}/{groundMaterialName}") as Material;
+
+                CreateGroundInstance(i);
+            }
+        }
+
         private void DefaultMapSize()
         {
-            MapSize.x = MapSize.x == 0 ? 25 : MapSize.x;
-            MapSize.y = MapSize.y == 0 ? 10 : MapSize.y;
+            MapSize.x = MapSize.x == 0 ? 1 : MapSize.x;
+            MapSize.y = MapSize.y == 0 ? 1 : MapSize.y;
         }
 
         /// <summary>
@@ -66,114 +96,70 @@ namespace ArrowLegend.MapEditor
         }
 
         /// <summary>
-        /// 切换关卡  isDestory表示是关闭界面还是切换关卡
-        /// </summary>
-        public void ChangeLevel(int level)
-        {
-            SaveInfo();
-            DestoryGround();
-        }
-
-        /// <summary>
         /// 保存数据
         /// </summary>
         private void SaveInfo()
         {
-            SetGroundMaterial();
-            SetMapSize();
+            int count = groundParent.transform.childCount;
+            groundInfo.Clear();
+            for (int i=0;i<count;i++)
+            {
+                Transform son= groundParent.transform.GetChild(i);
+                int x = (int)son.GetComponent<MeshRenderer>().bounds.size.x;
+                int y = (int)son.GetComponent<MeshRenderer>().bounds.size.z;
+
+                groundInfo.Add(new LevelCorrespondGround());
+
+                groundInfo[i].mapSize = new int[] { x, y };
+                groundInfo[i].groundMaterial = son.GetComponent<MeshRenderer>().sharedMaterial.name;
+                groundInfo[i].tranInfo.pos = new double[] { son.position.x, son.position.y, son.position.z };
+                groundInfo[i].tranInfo.rot = new double[] { son.localEulerAngles.x, son.localEulerAngles.y, son.localEulerAngles.z };
+
+            }
         }
 
-        /// <summary>
-        /// 切换到新的关卡之后的操作
-        /// </summary>
-        public void AfterChangeLevel()
+        public void ProductGround()
         {
-            Init();
-            ProductGround();
-        }
+            groundInfo.Add(new LevelCorrespondGround());
+            int index = groundInfo.Count-1;
+            groundInfo[index].mapSize = new int[] {1,1};
+            groundInfo[index].groundMaterial = "defalutMaterial";
 
-        /// <summary>
-        /// 创建新关卡
-        /// </summary>
-        public void CreateNewLevel()
-        {
-            SaveInfo();
-            MapSize = new Vector2Int(25, 10);  //恢复标准尺寸
-            DestoryGround();
-            //ProductGround();
+            MapSize = new Vector2Int(groundInfo[index].mapSize[0], groundInfo[index].mapSize[1]);
+            DefaultMapSize();
+            GroundMaterial = Resources.Load($"{mapTexturePath}/{ groundInfo[index].groundMaterial}") as Material;
+
+            CreateGroundInstance(index);
         }
 
         /// <summary>
         /// 产生地图
-        /// </summary>
-        public void ProductGround()
+        /// </summary>index  ground的编号</summary>
+        private void CreateGroundInstance(int index)
         {
-            if (ground == null)
-            {
-                if (GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId) != null)
-                {
-                    GameObject.DestroyImmediate(GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId));
-                    // return;
-                }
-                ground = new GameObject("Level_" + GlobalHandle.levelInfo.levelId);
-                Transform transform = ground.transform;
-                transform.SetParent(GameObject.Find("Map").transform);
-                transform.localPosition = Vector3.zero;
-                //transform.localPosition = new Vector3((MapGeneratorEditor.levelInfo.levelId-1)*33,0,0);
-                groundMeshFilter = ground.AddComponent<MeshFilter>();
-                UpdateMesh(groundMeshFilter);
-                ground.AddComponent<MeshRenderer>();
-
-                //InitBigTypeGameObject();
-                //InitEnemyParentGameObject();
-            }
-            else
-            {
-                UpdateMesh(groundMeshFilter);
-            }
-
+            currentGround = new GameObject("ground_"+(index+1));
+            Transform transform = currentGround.transform;
+            transform.SetParent(groundParent.transform);
+            transform.localPosition = Vector3.zero;
+            //transform.localPosition = new Vector3((MapGeneratorEditor.levelInfo.levelId-1)*33,0,0);
+            groundMeshFilter = currentGround.AddComponent<MeshFilter>();
+            UpdateMesh(groundMeshFilter);
+            currentGround.AddComponent<MeshRenderer>();
             SetGroundMaterial();
+
+            double[] pos = groundInfo[index].tranInfo.pos;
+            double[] rot = groundInfo[index].tranInfo.rot;
+            currentGround.transform.position = new Vector3((float)pos[0], (float)pos[1],(float)pos[2]);
+            currentGround.transform.localEulerAngles = new Vector3((float)rot[0], (float)rot[1], (float)rot[2]);
+
+            CurrGroundName = currentGround.name;
         }
 
-        /// <summary>
-        /// 初始化建筑大型类别在project视图上
-        /// </summary>
-        /// <param name="index"></param>
-        private void InitBigTypeGameObject()
+        public void ChangeSize()
         {
-            GameObject build = new GameObject("Build");
-            build.transform.SetParent(GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId).transform);
-            build.transform.localPosition = Vector3.zero;
-
-            int count = GlobalHandle.BuildBigTypeNameList.Count;
-            List<string> keys = new List<string>(GlobalHandle.BuildBigTypeNameList.Keys);
-
-            for (int i = 0; i < count; i++)
-            {
-                //挂载大类型
-                GameObject big = new GameObject(keys[i]);
-                big.transform.SetParent(GameObject.Find($"Level_{GlobalHandle.levelInfo.levelId}/Build").transform);
-                //挂载小类型
-                List<string[]> valus = new List<string[]>(GlobalHandle.BuildBigTypeNameList.Values);
-                for (int j = 0; j < valus[i].Length; j++)
-                {
-                    GameObject small = new GameObject(valus[i][j]);
-                    small.transform.SetParent(GameObject.Find($"Level_{GlobalHandle.levelInfo.levelId}/Build/{big.name}").transform);
-                }
-            }
+            groundMeshFilter = currentGround.GetComponent<MeshFilter>();
+            UpdateMesh(groundMeshFilter);
         }
-
-        /// <summary>
-        /// 初始化怪物类型父类在project视图上
-        /// </summary>
-        private void InitEnemyParentGameObject()
-        {
-            GameObject build = new GameObject("Enemy");
-            build.transform.SetParent(GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId).transform);
-            build.transform.localPosition = Vector3.zero;
-            //int timeCount = 
-        }
-
 
         /// <summary>
         /// 更新网格大小
@@ -263,7 +249,7 @@ namespace ArrowLegend.MapEditor
         /// </summary>
         private void DestoryGround()
         {
-            ground = null;
+            currentGround = null;
         }
 
         /// <summary>
@@ -271,21 +257,10 @@ namespace ArrowLegend.MapEditor
         /// </summary>
         public void SetGroundMaterial()
         {
-            if (ground != null)
+            if (currentGround != null)
             {
-                ground.GetComponent<MeshRenderer>().material = GroundMaterial;
+                currentGround.GetComponent<MeshRenderer>().material = GroundMaterial;
             }
-
-            GlobalHandle.levelInfo.groundMaterial = GroundMaterial.name;
-        }
-
-        /// <summary>
-        /// 设置地图大小
-        /// </summary>
-        private void SetMapSize()
-        {
-            GlobalHandle.levelInfo.mapSize[0] = MapSize.x == 0 ? 25 : MapSize.x;
-            GlobalHandle.levelInfo.mapSize[1] = MapSize.y == 0 ? 10 : MapSize.y;
         }
 
         /// <summary>
@@ -299,6 +274,22 @@ namespace ArrowLegend.MapEditor
                 return textures[0];
             }
             return null;
+        }
+
+        public void SelectChange(GameObject ground)
+        {
+            if (ground!=null&&ground.transform.parent.name=="Ground")
+            {
+                currentGround = ground;
+                CurrGroundName = ground.name;
+                int x = (int)ground.GetComponent<MeshRenderer>().bounds.size.x;
+                int y = (int)ground.GetComponent<MeshRenderer>().bounds.size.z;
+                MapSize = new Vector2Int(x,y);
+                groundMaterialName = ground.GetComponent<MeshRenderer>().sharedMaterial.name;
+                GroundMaterial = Resources.Load($"{mapTexturePath}/{ groundMaterialName}") as Material;
+
+                Debug.Log("切换" + CurrGroundName);
+            }
         }
 
     }

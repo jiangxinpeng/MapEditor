@@ -49,6 +49,8 @@ namespace ArrowLegend.MapEditor
             EnemyTime = 0;
             EnemyBigType = 0;
             EnemySmallType = 0;
+            EnemySmallList = valus[EnemyBigType];
+
 
             BindEnemyInfo();
             InitEnemy();
