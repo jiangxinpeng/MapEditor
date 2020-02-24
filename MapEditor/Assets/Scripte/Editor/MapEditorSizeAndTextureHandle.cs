@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,7 +36,7 @@ namespace ArrowLegend.MapEditor
         {
             SaveInfo();
             //Debug.Log("删除了第一关 创建新的第二关"+ GlobalHandle.levelInfo.levelId);
-            Object.DestroyImmediate(GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId));
+            UnityEngine.Object.DestroyImmediate(GameObject.Find("Level_" + GlobalHandle.levelInfo.levelId));
         }
 
         private void BindGroundInfo()
@@ -112,8 +113,8 @@ namespace ArrowLegend.MapEditor
 
                 groundInfo[i].mapSize = new int[] { x, y };
                 groundInfo[i].groundMaterial = son.GetComponent<MeshRenderer>().sharedMaterial.name;
-                groundInfo[i].tranInfo.pos = new double[] { son.position.x, son.position.y, son.position.z };
-                groundInfo[i].tranInfo.rot = new double[] { son.localEulerAngles.x, son.localEulerAngles.y, son.localEulerAngles.z };
+                groundInfo[i].tranInfo.pos = new double[] {Math.Round(son.position.x,2), Math.Round(son.position.y), Math.Round(son.position.z) };
+                groundInfo[i].tranInfo.rot = new double[] { Math.Round(son.localEulerAngles.x), Math.Round(son.localEulerAngles.y), Math.Round(son.localEulerAngles.z) };
 
             }
         }
@@ -266,9 +267,9 @@ namespace ArrowLegend.MapEditor
         /// <summary>
         /// 点击打开材质界面
         /// </summary>
-        public Object OpenMaterial()
+        public UnityEngine.Object OpenMaterial()
         {
-            Object[] textures = Resources.LoadAll(mapTexturePath);
+            UnityEngine.Object[] textures = Resources.LoadAll(mapTexturePath);
             if (textures.Length != 0)
             {
                 return textures[0];
@@ -278,7 +279,7 @@ namespace ArrowLegend.MapEditor
 
         public void SelectChange(GameObject ground)
         {
-            if (ground!=null&&ground.transform.parent.name=="Ground")
+            if (ground!=null&&ground.name.StartsWith("ground")&&ground.transform.parent.name=="Ground")
             {
                 currentGround = ground;
                 CurrGroundName = ground.name;
