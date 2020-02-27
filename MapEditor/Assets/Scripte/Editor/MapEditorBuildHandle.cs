@@ -183,7 +183,6 @@ namespace ArrowLegend.MapEditor
 
                     for (int m = 0; m < instanceCount; m++)
                     {
-                        Debug.Log($"保存建筑：大类型{i }小类型{j }实例序号{m}");
                         Transform instance = small.GetChild(m);
                         //if (m>= infoList.Count)
                         //{
@@ -191,8 +190,10 @@ namespace ArrowLegend.MapEditor
                        // }
                         TransformInfo info = infoList[m];
                         info.pos = new double[] { Math.Round(instance.localPosition.x, 2), Math.Round(instance.localPosition.y, 2), Math.Round(instance.localPosition.z, 2) };
-                        info.rot = new double[] { Math.Round(instance.localRotation.x, 2), Math.Round(instance.localRotation.y, 2), Math.Round(instance.localRotation.z, 2) };
+                        info.rot = new double[] { Math.Round(instance.localEulerAngles.x, 2), Math.Round(instance.localEulerAngles.y, 2), Math.Round(instance.localEulerAngles.z, 2) };
                         info.scal = new double[] { Math.Round(instance.localScale.x, 2), Math.Round(instance.localScale.y, 2), Math.Round(instance.localScale.z, 2) };
+
+                        Debug.Log($"保存建筑：大类型{i }小类型{j }实例序号{m}");
                     }
                 }
             }
@@ -222,6 +223,10 @@ namespace ArrowLegend.MapEditor
             //List<TransformInfo> transformInfo = GetCurrentBuildInfo();
             //transformInfo.Add(new TransformInfo() { pos = new double[] { Math.Round(vector3.x, 2), Math.Round(vector3.y, 2), Math.Round(vector3.z, 2) } });
             TransformInfo info = new TransformInfo() { pos = new double[] { Math.Round(vector3.x, 2), Math.Round(vector3.y, 2), Math.Round(vector3.z, 2) } };
+            if (BuildBigType==1||BuildBigType==2)  //石头或者仙人掌
+            {
+                info.rot = new double[] { -90,0,0 };
+            }
             InstantiateBuild(BuildBigType,BuildSmallType, count, info);
         }
 

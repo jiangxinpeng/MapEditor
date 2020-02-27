@@ -18,8 +18,8 @@ namespace ArrowLegend.MapEditor
 
         //public static string[] boundaryWallTypeArray = new string[] { "boundaryWall_1", "boundaryWall_2" };
         public static string[] grassTypeArray = new string[] { "caoqiu" };
-        public static string[] treeTypeArray = new string[] {  "xianrenzhang01", "xianrenzhang02" };
-        public static string[] stoneTypeArray = new string[] {"shitou01", "shitou02", "shitou03", "shitou04", "shitou05" };
+        public static string[] treeTypeArray = new string[] {  "xianrenzhang1", "xianrenzhang2" };
+        public static string[] stoneTypeArray = new string[] {"shitou1", "shitou2", "shitou3", "shitou4", "shitou5" };
         public static string[] shuganTypeArray = new string[] { "kushugan01" };
         //public static string[] stabTypeArray = new string[] { "stab_1", "stab_2" };
         //public static string[] waterTypeArray = new string[] { "water_1", "water_2" };
