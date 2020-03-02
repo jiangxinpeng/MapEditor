@@ -215,6 +215,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4015491717095290}
   - component: {fileID: 95986282399111886}
+  - component: {fileID: 114746390483674394}
   m_Layer: 0
   m_Name: "\u963F\u52AA\u6BD4\u65AFBoss"
   m_TagString: Untagged
@@ -1542,6 +1543,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114746390483674394
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1243644900183160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75da674e9dbc9334e92b1fd83a4cfb14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TypeId: 103
 --- !u!137 &137211170931619696
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

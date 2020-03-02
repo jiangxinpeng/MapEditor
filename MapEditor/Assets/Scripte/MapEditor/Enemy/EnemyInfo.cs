@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace ArrowLegend.MapEditor
 {
-    class EnemyInfo
+   public class EnemyInfo:MonoBehaviour
     {
-        private int[] id;   //怪物的id
+        public int TypeId;
     }
 }

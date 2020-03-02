@@ -320,6 +320,8 @@ namespace ArrowLegend.MapEditor
                             info.rot = new double[] { Math.Round(instance.localRotation.x, 2), Math.Round(instance.localRotation.y, 2), Math.Round(instance.localRotation.z, 2) };
                             info.scal = new double[] { Math.Round(instance.localScale.x, 2), Math.Round(instance.localScale.y, 2), Math.Round(instance.localScale.z, 2) };
 
+                            info.TypeId = instance.GetComponent<EnemyInfo>().TypeId;
+
                             Transform patrol = instance.Find("巡逻路径");
                             int patrolCount = patrol.childCount;
                             for (int p=0;p<patrolCount;p++)

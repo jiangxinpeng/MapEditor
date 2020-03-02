@@ -11,6 +11,8 @@ namespace ArrowLegend.MapEditor
     /// </summary>
     public class TransformInfo
     {
+        public int TypeId;                         //主要是怪物的编号类型
+
         public double[] pos = new double[3];            //位置
 
         public double[] rot = new double[3];             //旋转角度

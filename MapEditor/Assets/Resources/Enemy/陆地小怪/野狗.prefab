@@ -441,6 +441,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4849826834339440}
   - component: {fileID: 95557250011586044}
+  - component: {fileID: 114219069479276108}
   m_Layer: 0
   m_Name: "\u91CE\u72D7"
   m_TagString: Untagged
@@ -963,6 +964,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114219069479276108
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1896735459584260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75da674e9dbc9334e92b1fd83a4cfb14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TypeId: 101
 --- !u!137 &137653170431918284
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

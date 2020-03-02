@@ -57,6 +57,12 @@ namespace ArrowLegend.MapEditor
                 info.scal[2] = Math.Round(go.transform.localScale.z,2);
             }
             go.transform.localScale = new Vector3((float)info.scal[0], (float)info.scal[1], (float)info.scal[2]);
+
+            EnemyInfo enemyInfo = go.GetComponent<EnemyInfo>();
+            if (enemyInfo!=null)
+            {
+                enemyInfo.TypeId=info.TypeId;
+            }
         }
 
         /// <summary>
